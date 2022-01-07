@@ -1,0 +1,40 @@
+* {
+   -fx-primary: #5786a3;
+   -fx-secondary: #4b4e50;
+   -fx-yellow: #FCD21D;
+}
+
+/*
+TEXT
+*/
+.h1 {
+    /*-fx-fill: red;*/
+}
+
+/*
+TABS
+*/
+.tab-pane {
+    -fx-tab-min-height: 40px;
+    -fx-tab-min-width: 80px;
+}
+
+.tab {
+    -fx-background-color: -fx-secondary;
+}
+
+.tab .tab-label {
+    -fx-text-fill: #fff;
+}
+
+.tab:selected {
+    -fx-background-color: -fx-primary;
+}
+
+.tab:selected .tab-label {
+
+}
+
+.tab-content-area {
+    -fx-padding: 25px;
+}

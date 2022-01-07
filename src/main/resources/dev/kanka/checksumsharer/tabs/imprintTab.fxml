@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import java.lang.String?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="dev.kanka.checksumsharer.tabs.ImprintTabController">
+    <children>
+        <VBox alignment="TOP_CENTER" layoutX="230.0" layoutY="35.0" prefHeight="200.0" prefWidth="100.0" spacing="20.0"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <children>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1" text="Checksum Sharer"/>
+                <HBox alignment="TOP_CENTER">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Version: "/>
+                        <Text fx:id="versionText" strokeType="OUTSIDE" strokeWidth="0.0" text="Version"/>
+                    </children>
+                </HBox>
+                <Button fx:id="donateButton" mnemonicParsing="false" text="Donate">
+                    <styleClass>
+                        <String fx:value="btn"/>
+                        <String fx:value="btn-primary"/>
+                    </styleClass>
+                </Button>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
