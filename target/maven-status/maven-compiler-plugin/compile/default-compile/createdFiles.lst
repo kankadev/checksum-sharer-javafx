@@ -1,0 +1,6 @@
+dev\kanka\checksumsharer\AppController.class
+dev\kanka\checksumsharer\ChecksumSharerApplication.class
+dev\kanka\checksumsharer\tabs\ImprintTabController.class
+dev\kanka\checksumsharer\tabs\SettingsTabController.class
+dev\kanka\checksumsharer\tabs\HomeTabController.class
+module-info.class

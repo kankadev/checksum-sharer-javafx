@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+
+<TabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <tabs>
+        <Tab fx:id="homeTab" text="Home">
+            <content>
+                <fx:include fx:id="homeTabPage" source="tabs/homeTab.fxml" />
+            </content>
+        </Tab>
+        <Tab fx:id="settingsTab" text="Settings">
+            <content>
+                <fx:include fx:id="settingsTabPage" source="tabs/settingsTab.fxml" />
+            </content>
+        </Tab>
+        <Tab fx:id="imprintTab" text="Imprint">
+            <content>
+                <fx:include fx:id="imprintTabPage" source="tabs/imprintTab.fxml" />
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>
