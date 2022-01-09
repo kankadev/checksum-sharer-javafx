@@ -18,15 +18,11 @@ public class ImprintTabController implements Initializable  {
     @FXML
     Button donateButton;
 
-    public ImprintTabController() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         // TODO check this in release
         Platform.runLater(() ->
                 versionText.setText(ChecksumSharerApplication.class.getPackage().getImplementationVersion())
         );
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
     }
 }

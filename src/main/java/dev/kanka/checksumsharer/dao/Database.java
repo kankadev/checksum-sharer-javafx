@@ -6,23 +6,25 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
-
 public class Database {
     private static final Logger logger = LogManager.getLogger();
 
-    private static final String location = ChecksumSharerApplication.class.getResource("databases/" + DAOConstants.DB_NAME_FILES).toExternalForm();
-
-    private static final String requiredTable = DAOConstants.TABLE_NAME_FILES;
+    private static final String[] requiredTables = {FileDAO.TABLE_NAME};
+    public static final String DB_RESOURCE = ChecksumSharerApplication.class.getResource("databases/checksumsharer.db").toExternalForm();
 
     public static boolean isOK() {
-        if (!checkDrivers()) return false; //driver errors
+        if (!checkDrivers()) return false;
 
-        if (!checkConnection()) return false; //can't connect to db
+        if (!checkConnection()) return false;
 
-        return checkTables(); //tables didn't exist
+        if (!FileDAO.createTable()) return false;
+
+        return checkTables();
     }
 
     private static boolean checkDrivers() {
+        logger.debug("checkDrivers()");
+
         try {
             Class.forName("org.sqlite.JDBC");
             DriverManager.registerDriver(new org.sqlite.JDBC());
@@ -34,7 +36,12 @@ public class Database {
     }
 
     private static boolean checkConnection() {
+        logger.debug("checkConnection()");
         try (Connection connection = connect()) {
+            if (connection != null) {
+                DatabaseMetaData metaData = connection.getMetaData();
+                logger.debug(metaData.toString());
+            }
             return connection != null;
         } catch (SQLException e) {
             logger.error("Could not connect to database", e);
@@ -43,29 +50,46 @@ public class Database {
     }
 
     private static boolean checkTables() {
-        String checkTables =
-                "select DISTINCT tbl_name from sqlite_master where tbl_name = '" + requiredTable + "'";
+        logger.debug("checkTables()");
 
-        try (Connection connection = Database.connect()) {
-            PreparedStatement statement = connection.prepareStatement(checkTables);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                if (rs.getString("tbl_name").equals(requiredTable)) return true;
+        boolean isOk = false;
+
+        try (Connection connection = connect()) {
+            if (connection != null) {
+                for (String table : requiredTables) {
+                    String statement = "select DISTINCT tbl_name from sqlite_master where tbl_name = '" + table + "'";
+
+                    PreparedStatement preparedStatement = connection.prepareStatement(statement);
+                    ResultSet rs = preparedStatement.executeQuery();
+
+                    while (rs.next()) {
+                        if (rs.getString("tbl_name").equals(table)) {
+                            isOk = true;
+                        }
+                    }
+                }
+            } else {
+                logger.error("Connection is null.");
+                isOk = false;
             }
+
+            return isOk;
+
         } catch (SQLException e) {
             logger.error("Could not find tables in database", e);
             return false;
         }
-        return false;
     }
 
     protected static Connection connect() {
+        logger.debug("connect()");
+
         String dbPrefix = "jdbc:sqlite:";
         Connection connection;
         try {
-            connection = DriverManager.getConnection(dbPrefix + location);
+            connection = DriverManager.getConnection(dbPrefix + DB_RESOURCE);
         } catch (SQLException e) {
-            logger.error("Could not connect to SQLite DB at " + location, e);
+            logger.error("Could not connect to SQLite DB at " + DB_RESOURCE, e);
             return null;
         }
         return connection;

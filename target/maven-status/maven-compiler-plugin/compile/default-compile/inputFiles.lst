@@ -1,6 +1,13 @@
-D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\ChecksumSharerApplication.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\utils\Alerts.java
 D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\tabs\ImprintTabController.java
 D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\tabs\HomeTabController.java
 D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\tabs\SettingsTabController.java
-D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\AppController.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\models\File.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\dao\DAOConstants.java
 D:\Repositories\checksum-sharer-javafx\src\main\java\module-info.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\ChecksumSharerApplication.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\dao\CRUDHelper.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\tabs\DonateTabController.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\AppController.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\dao\Database.java
+D:\Repositories\checksum-sharer-javafx\src\main\java\dev\kanka\checksumsharer\dao\FileDAO.java

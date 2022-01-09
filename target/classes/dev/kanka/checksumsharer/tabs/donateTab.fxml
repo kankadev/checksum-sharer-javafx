@@ -7,7 +7,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="dev.kanka.checksumsharer.tabs.ImprintTabController">
+            fx:controller="dev.kanka.checksumsharer.tabs.DonateTabController">
     <children>
         <VBox alignment="TOP_CENTER" layoutX="230.0" layoutY="35.0" prefHeight="200.0" prefWidth="100.0" spacing="20.0"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"

@@ -13,27 +13,55 @@ import java.util.Optional;
 public class FileDAO {
 
     private static final Logger logger = LogManager.getLogger();
-
-    private static final String tableName = DAOConstants.TABLE_NAME_FILES;
-    private static final String fileNameColumn = "fileName";
-    private static final String lastNameColumn = "lastName";
-    private static final String ageColumn = "Age";
+    public static final String TABLE_NAME = "knkFiles";
+    public static final String dateColumn = "date";
+    public static final String fileNameColumn = "fileName";
+    public static final String fullPathColumn = "fullPath";
+    public static final String lastModifiedColumn = "lastModified";
+    public static final String fileSizeColumn = "fileSize";
     private static final String idColumn = "id";
 
-    private static final ObservableList<File> files;
+    private static final ObservableList<File> files = FXCollections.observableArrayList();
 
     static {
-        files = FXCollections.observableArrayList();
-        updateFilesFromDB();
+        // TODO double call of Database.isOK
+        if (Database.isOK())
+            updateFilesFromDB();
     }
 
     public static ObservableList<File> getFiles() {
         return FXCollections.unmodifiableObservableList(files);
     }
 
-    private static void updateFilesFromDB() {
 
-        String query = "SELECT * FROM " + tableName;
+    public static boolean createTable() {
+        logger.debug("createTable()");
+
+        try (Connection connection = Database.connect()) {
+
+            String query = "CREATE TABLE IF NOT EXISTS '" + TABLE_NAME + "' ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + dateColumn + " DATETIME DEFAULT CURRENT_TIMESTAMP, "
+                    + fileNameColumn + " TEXT NOT NULL, "
+                    + fullPathColumn + " TEXT NOT NULL, "
+                    + lastModifiedColumn + " INTEGER NOT NULL, "
+                    + fileSizeColumn + " INTEGER NOT NULL"
+                    + ")";
+
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.execute();
+
+            return true;
+        } catch (SQLException e) {
+            logger.error(e);
+            return false;
+        }
+    }
+
+    private static void updateFilesFromDB() {
+        logger.debug("updateFilesFromDB()");
+
+        String query = "SELECT * FROM " + TABLE_NAME;
 
         try (Connection connection = Database.connect()) {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -41,9 +69,11 @@ public class FileDAO {
             files.clear();
             while (rs.next()) {
                 files.add(new File(
+                        rs.getTimestamp(dateColumn),
                         rs.getString(fileNameColumn),
-                        rs.getString(lastNameColumn),
-                        rs.getInt(ageColumn),
+                        rs.getString(fullPathColumn),
+                        rs.getLong(lastModifiedColumn),
+                        rs.getLong(fileSizeColumn),
                         rs.getInt(idColumn)));
             }
         } catch (SQLException e) {
@@ -55,10 +85,10 @@ public class FileDAO {
     public static void update(File newFile) {
         //update database
         int rows = CRUDHelper.update(
-                tableName,
-                new String[]{fileNameColumn, lastNameColumn, ageColumn},
-                new Object[]{newFile.getFileName(), newFile.getLastName(), newFile.getAge()},
-                new int[]{Types.VARCHAR, Types.VARCHAR, Types.INTEGER},
+                TABLE_NAME,
+                new String[]{fileNameColumn, fullPathColumn, lastModifiedColumn},
+                new Object[]{newFile.getFileName(), newFile.getFullPath(), newFile.getLastModified(), newFile.getFileSize()},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.INTEGER, Types.INTEGER},
                 idColumn,
                 Types.INTEGER,
                 newFile.getId()
@@ -77,26 +107,23 @@ public class FileDAO {
         });
     }
 
-    public static void insertFile(String firstName, String lastName, int age) {
+    public static void insertFile(String fileName, String fullPath, Long lastModified, Long fileSize) {
         //update database
         int id = (int) CRUDHelper.create(
-                tableName,
-                new String[]{"LastName", "FirstName", "Age"},
-                new Object[]{lastName, firstName, age},
-                new int[]{Types.VARCHAR, Types.VARCHAR, Types.INTEGER});
+                TABLE_NAME,
+                new String[]{fileNameColumn, fullPathColumn, lastModifiedColumn, fileSizeColumn},
+                new Object[]{fileName, fullPath, lastModified, fileSize},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.INTEGER, Types.INTEGER});
 
         //update cache
-        files.add(new File(
-                firstName,
-                lastName,
-                age,
-                id
-        ));
+//        files.add(new File(null, fileName, fullPath, lastModified, fileSize, id));
+        updateFilesFromDB();
     }
+
 
     public static void delete(int id) {
         //update database
-        CRUDHelper.delete(tableName, id);
+        CRUDHelper.delete(TABLE_NAME, id);
 
         //update cache
         Optional<File> file = getFile(id);
