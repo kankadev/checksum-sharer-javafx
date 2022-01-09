@@ -1,20 +1,23 @@
 package dev.kanka.checksumsharer.models;
 
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
+
+import java.sql.Timestamp;
 
 public class File {
+    private final ReadOnlyObjectProperty date;
     private final ReadOnlyStringProperty fileName;
-    private final ReadOnlyStringProperty lastName;
-    private final ReadOnlyIntegerProperty age;
+    private final ReadOnlyStringProperty fullPath;
+    private final ReadOnlyLongProperty lastModified;
+    private final ReadOnlyLongProperty fileSize;
     private final int id;
 
-    public File(String fileName, String lastName, Integer age, int id) {
+    public File(Timestamp ts, String fileName, String fullPath, Long lastModified, Long fileSize, int id) {
+        this.date = new SimpleObjectProperty<>(ts);
         this.fileName = new SimpleStringProperty(fileName);
-        this.lastName = new SimpleStringProperty(lastName);
-        this.age = new SimpleIntegerProperty(age);
+        this.fullPath = new SimpleStringProperty(fullPath);
+        this.lastModified = new SimpleLongProperty(lastModified);
+        this.fileSize = new SimpleLongProperty(fileSize);
         this.id = id;
     }
 
@@ -22,32 +25,48 @@ public class File {
         return id;
     }
 
+    public Timestamp getDate() {
+        return (Timestamp) date.get();
+    }
+
     public String getFileName() {
         return fileName.get();
+    }
+
+    public String getFullPath() {
+        return fullPath.get();
+    }
+
+    public Long getLastModified() {
+        return lastModified.get();
+    }
+
+    public Long getFileSize() {
+        return fileSize.get();
+    }
+
+    public ReadOnlyObjectProperty dateProperty() {
+        return date;
     }
 
     public ReadOnlyStringProperty fileNameProperty() {
         return fileName;
     }
 
-    public String getLastName() {
-        return lastName.get();
+    public ReadOnlyStringProperty fullPathProperty() {
+        return fullPath;
     }
 
-    public ReadOnlyStringProperty lastNameProperty() {
-        return lastName;
+    public ReadOnlyLongProperty lastModifiedProperty() {
+        return lastModified;
     }
 
-    public int getAge() {
-        return age.get();
-    }
-
-    public ReadOnlyIntegerProperty ageProperty() {
-        return age;
+    public ReadOnlyLongProperty fileSizeProperty() {
+        return fileSize;
     }
 
     @Override
     public String toString() {
-        return "File [" + fileName.get() + " " + lastName.get() + ", aged " + age.get() + " with id " + id + "]";
+        return "File [Saved: " + date.get() + ", " + fileName.get() + ", " + fullPath.get() + ", lastModified: " + lastModified.get() + ", fileSize: " + fileSize.get() + " with id " + id + "]";
     }
 }

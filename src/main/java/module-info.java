@@ -19,4 +19,5 @@ module dev.kanka.checksumsharer {
     exports dev.kanka.checksumsharer;
     exports dev.kanka.checksumsharer.tabs;
     opens dev.kanka.checksumsharer.tabs to javafx.fxml;
+    opens dev.kanka.checksumsharer.models to javafx.base;
 }
