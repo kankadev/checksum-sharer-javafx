@@ -5,12 +5,12 @@ import javafx.beans.property.*;
 import java.sql.Timestamp;
 
 public class File {
+    private final ReadOnlyIntegerProperty id;
     private final ReadOnlyObjectProperty date;
     private final ReadOnlyStringProperty fileName;
     private final ReadOnlyStringProperty fullPath;
     private final ReadOnlyLongProperty lastModified;
     private final ReadOnlyLongProperty fileSize;
-    private final int id;
 
     public File(Timestamp ts, String fileName, String fullPath, Long lastModified, Long fileSize, int id) {
         this.date = new SimpleObjectProperty<>(ts);
@@ -18,11 +18,11 @@ public class File {
         this.fullPath = new SimpleStringProperty(fullPath);
         this.lastModified = new SimpleLongProperty(lastModified);
         this.fileSize = new SimpleLongProperty(fileSize);
-        this.id = id;
+        this.id = new SimpleIntegerProperty(id);
     }
 
     public int getId() {
-        return id;
+        return id.get();
     }
 
     public Timestamp getDate() {

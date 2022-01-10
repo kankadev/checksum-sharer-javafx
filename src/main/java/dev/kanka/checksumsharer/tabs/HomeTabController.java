@@ -10,8 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +18,8 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static dev.kanka.checksumsharer.dao.FileDAO.insertFilesIntoDB;
 
 public class HomeTabController implements Initializable {
     private static final Logger logger = LogManager.getLogger();
@@ -43,6 +43,9 @@ public class HomeTabController implements Initializable {
     TableColumn<File, Long> fileSizeColumn;
 
     @FXML
+    TableColumn<File, Integer> idColumn;
+
+    @FXML
     Button fileChooserButton;
 
     @Override
@@ -63,24 +66,13 @@ public class HomeTabController implements Initializable {
         fullPathColumn.setCellValueFactory(new PropertyValueFactory<>("fullPath"));
         lastModifiedColumn.setCellValueFactory(new PropertyValueFactory<>("lastModified"));
         fileSizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
     }
 
     private void registerEventHandler() {
         fileChooserButton.setOnAction((event) -> {
             openFileChooser();
         });
-
-        fileChooserButton.setOnDragOver((event -> {
-            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            event.consume();
-        }));
-
-        fileChooserButton.setOnDragDropped((event -> {
-            Dragboard dragboard = event.getDragboard();
-            if (dragboard.hasFiles()) {
-                handleDragAndDropFiles(dragboard);
-            }
-        }));
     }
 
     private List<java.io.File> openFileChooser() {
@@ -89,22 +81,5 @@ public class HomeTabController implements Initializable {
         logger.info("Chosen file(s): " + files);
         insertFilesIntoDB(files);
         return files;
-    }
-
-    private List<java.io.File> handleDragAndDropFiles(Dragboard dragboard) {
-        List<java.io.File> files = dragboard.getFiles();
-        logger.info("Dropped files: " + files);
-        insertFilesIntoDB(files);
-        return files;
-    }
-
-    private void getMetaDataOfFile(java.io.File file) {
-
-    }
-
-    private void insertFilesIntoDB(List<java.io.File> files) {
-        for (java.io.File file: files) {
-            FileDAO.insertFile(file.getName(), file.getAbsolutePath(), file.lastModified(), file.length());
-        }
     }
 }

@@ -1,17 +1,22 @@
 package dev.kanka.checksumsharer;
 
 import dev.kanka.checksumsharer.dao.Database;
+import dev.kanka.checksumsharer.dao.FileDAO;
 import dev.kanka.checksumsharer.utils.Alerts;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 
 public class ChecksumSharerApplication extends Application {
@@ -25,6 +30,7 @@ public class ChecksumSharerApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        primaryStage = stage;
         if (Database.isOK()) {
             FXMLLoader fxmlLoader = new FXMLLoader(ChecksumSharerApplication.class.getResource("app.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 1200, 900);
@@ -34,7 +40,19 @@ public class ChecksumSharerApplication extends Application {
             stage.setMaximized(true);
             stage.setScene(scene);
             stage.show();
-            primaryStage = stage;
+
+            scene.setOnDragOver((event -> {
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                event.consume();
+            }));
+
+            scene.setOnDragDropped((event -> {
+                Dragboard dragboard = event.getDragboard();
+                if (dragboard.hasFiles()) {
+                    handleDragAndDropFiles(dragboard);
+                }
+            }));
+
         } else {
             Alerts.error(
                     "Database error",
@@ -47,5 +65,12 @@ public class ChecksumSharerApplication extends Application {
 
     public static Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    private List<File> handleDragAndDropFiles(Dragboard dragboard) {
+        List<java.io.File> files = dragboard.getFiles();
+        logger.info("Dropped files: " + files);
+        FileDAO.insertFilesIntoDB(files);
+        return files;
     }
 }

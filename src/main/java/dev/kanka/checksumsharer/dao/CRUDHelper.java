@@ -98,22 +98,31 @@ public class CRUDHelper {
         queryBuilder.append(" VALUES (");
 
         for (int i = 0; i < number; i++) {
-            switch (types[i]) {
-                case Types.VARCHAR:
-                    queryBuilder.append("'");
-                    queryBuilder.append((String) values[i]);
-                    queryBuilder.append("'");
-                    break;
-                case Types.INTEGER:
-                    queryBuilder.append(values[i]); // TODO check if (int) cast is necessary
-            }
+            queryBuilder.append("?");
             if (i < number - 1) queryBuilder.append(", ");
         }
 
         queryBuilder.append(");");
 
-        try (Connection conn = Database.connect()) {
-            PreparedStatement preparedStatement = conn.prepareStatement(queryBuilder.toString());
+        logger.debug("queryBuilder: " + queryBuilder);
+
+        try (Connection conn = Database.connect(); PreparedStatement preparedStatement = conn.prepareStatement(queryBuilder.toString())) {
+
+            for (int i = 0; i < number; i++) {
+                logger.debug(i);
+
+                switch (types[i]) {
+                    case Types.VARCHAR:
+                        preparedStatement.setString(i + 1, (String) values[i]);
+                        break;
+                    case Types.INTEGER:
+                        preparedStatement.setLong(i + 1, Long.parseLong(values[i].toString()));
+                }
+                logger.debug(i + " " + values[i]);
+            }
+
+            logger.debug("preparedStatement: " + preparedStatement.toString());
+
             int affectedRows = preparedStatement.executeUpdate();
             // check the affected rows
             if (affectedRows > 0) {
@@ -132,7 +141,6 @@ public class CRUDHelper {
     }
 
     /**
-     *
      * @param tableName
      * @param id
      * @return affected row(s) count

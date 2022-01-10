@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -14,12 +15,12 @@ public class FileDAO {
 
     private static final Logger logger = LogManager.getLogger();
     public static final String TABLE_NAME = "knkFiles";
+    public static final String idColumn = "id";
     public static final String dateColumn = "date";
     public static final String fileNameColumn = "fileName";
     public static final String fullPathColumn = "fullPath";
     public static final String lastModifiedColumn = "lastModified";
     public static final String fileSizeColumn = "fileSize";
-    private static final String idColumn = "id";
 
     private static final ObservableList<File> files = FXCollections.observableArrayList();
 
@@ -120,6 +121,11 @@ public class FileDAO {
         updateFilesFromDB();
     }
 
+    public static void insertFilesIntoDB(List<java.io.File> files) {
+        for (java.io.File file: files) {
+            FileDAO.insertFile(file.getName(), file.getAbsolutePath(), file.lastModified(), file.length());
+        }
+    }
 
     public static void delete(int id) {
         //update database
