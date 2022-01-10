@@ -10,6 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="checksum-sharer" target="17" />
       <module name="ChecksumSharer" target="17" />
     </bytecodeTargetLevel>
   </component>
