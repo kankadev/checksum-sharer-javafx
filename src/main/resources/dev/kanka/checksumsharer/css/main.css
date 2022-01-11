@@ -5,13 +5,6 @@
 }
 
 /*
-TEXT
-*/
-.h1 {
-    /*-fx-fill: red;*/
-}
-
-/*
 TABS
 */
 .tab-pane {
@@ -47,4 +40,16 @@ TABS
     -fx-background-repeat: no-repeat;
     -fx-background-position: left center;
     -fx-padding: 6px 6px 6px 20px;
+}
+
+/*
+FORMSFX
+*/
+.simple-control > .label {
+    -fx-font-weight: bold;
+}
+
+.simple-control > .field-label-description {
+    -fx-font-weight: normal;
+    -fx-font-style: italic;
 }

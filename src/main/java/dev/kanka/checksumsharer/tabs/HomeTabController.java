@@ -4,6 +4,7 @@ import dev.kanka.checksumsharer.ChecksumSharerApplication;
 import dev.kanka.checksumsharer.dao.FileDAO;
 import dev.kanka.checksumsharer.models.File;
 import dev.kanka.checksumsharer.utils.FileUtil;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -17,6 +18,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -59,6 +63,9 @@ public class HomeTabController implements Initializable {
 
         initHistoryTableView();
         registerEventHandler();
+
+        // unfocus
+        Platform.runLater(() -> historyTableView.getParent().requestFocus());
     }
 
     private void initHistoryTableView() {
@@ -71,6 +78,21 @@ public class HomeTabController implements Initializable {
         fileNameColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
         fullPathColumn.setCellValueFactory(new PropertyValueFactory<>("fullPath"));
         lastModifiedColumn.setCellValueFactory(new PropertyValueFactory<>("lastModified"));
+        lastModifiedColumn.setCellFactory(tc -> new TableCell<>() {
+            @Override
+            protected void updateItem(Long value, boolean empty) {
+                super.updateItem(value, empty);
+
+                if (value == null || empty) {
+                    setText("");
+                } else {
+                    Date date = new Date(value);
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+                    setText(dateFormat.format(date));
+                    // setGraphic(); // TODO check difference between this and setText()
+                }
+            }
+        });
 
         fileSizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
         fileSizeColumn.setCellFactory(tc -> new TableCell<>() {
@@ -124,6 +146,9 @@ public class HomeTabController implements Initializable {
         sortedList.comparatorProperty().bind(historyTableView.comparatorProperty());
 
         historyTableView.setItems(sortedList);
+
+        idColumn.setSortType(TableColumn.SortType.DESCENDING);
+        historyTableView.getSortOrder().addAll(idColumn);
     }
 
     private void registerEventHandler() {
