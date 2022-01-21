@@ -2,7 +2,7 @@ package dev.kanka.checksumsharer.tabs;
 
 import dev.kanka.checksumsharer.ChecksumSharerApplication;
 import dev.kanka.checksumsharer.dao.FileDAO;
-import dev.kanka.checksumsharer.models.File;
+import dev.kanka.checksumsharer.models.KnkFile;
 import dev.kanka.checksumsharer.utils.FileUtil;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -16,6 +16,7 @@ import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -23,8 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import static dev.kanka.checksumsharer.dao.FileDAO.insertFilesIntoDB;
 
 public class HomeTabController implements Initializable {
 
@@ -34,25 +33,25 @@ public class HomeTabController implements Initializable {
     TextField searchTextField;
 
     @FXML
-    TableView<File> historyTableView;
+    TableView<KnkFile> historyTableView;
 
     @FXML
-    TableColumn<File, Integer> idColumn;
+    TableColumn<KnkFile, Integer> idColumn;
 
     @FXML
-    TableColumn<File, Timestamp> dateColumn;
+    TableColumn<KnkFile, Timestamp> dateColumn;
 
     @FXML
-    TableColumn<File, String> fileNameColumn;
+    TableColumn<KnkFile, String> fileNameColumn;
 
     @FXML
-    TableColumn<File, String> fullPathColumn;
+    TableColumn<KnkFile, String> fullPathColumn;
 
     @FXML
-    TableColumn<File, Long> lastModifiedColumn;
+    TableColumn<KnkFile, Long> lastModifiedColumn;
 
     @FXML
-    TableColumn<File, Number> fileSizeColumn;
+    TableColumn<KnkFile, Number> fileSizeColumn;
 
     @FXML
     Button fileChooserButton;
@@ -107,10 +106,10 @@ public class HomeTabController implements Initializable {
             }
         });
 
-        ObservableList<File> filesList = FileDAO.getFiles();
-        FilteredList<File> filteredList = new FilteredList<>(filesList, b -> true);
+        ObservableList<KnkFile> filesList = FileDAO.getFiles();
+        FilteredList<KnkFile> filteredList = new FilteredList<>(filesList, b -> true);
 
-        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> filteredList.setPredicate(file -> {
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> filteredList.setPredicate(knkFile -> {
 
             // if filter is empty, display all files.
             if (newValue == null || newValue.isEmpty()) {
@@ -119,30 +118,30 @@ public class HomeTabController implements Initializable {
 
             String searchString = newValue.toLowerCase();
 
-            if (String.valueOf(file.getId()).contains(searchString)) {
+            if (String.valueOf(knkFile.getId()).contains(searchString)) {
                 return true;
             }
 
-            if (file.getFileName().contains(searchString)) {
+            if (knkFile.getFileName().contains(searchString)) {
                 return true;
             }
 
-            if (file.getFullPath().contains(searchString)) {
+            if (knkFile.getFullPath().contains(searchString)) {
                 return true;
             }
 
-            if (String.valueOf(file.getFileSize()).contains(searchString)) {
+            if (String.valueOf(knkFile.getFileSize()).contains(searchString)) {
                 return true;
             }
 
-            if (String.valueOf(file.getLastModified()).contains(searchString)) {
+            if (String.valueOf(knkFile.getLastModified()).contains(searchString)) {
                 return true;
             }
 
             return false;
         }));
 
-        SortedList<File> sortedList = new SortedList<>(filteredList);
+        SortedList<KnkFile> sortedList = new SortedList<>(filteredList);
         sortedList.comparatorProperty().bind(historyTableView.comparatorProperty());
 
         historyTableView.setItems(sortedList);
@@ -153,16 +152,15 @@ public class HomeTabController implements Initializable {
 
     private void registerEventHandler() {
         fileChooserButton.setOnAction((event) -> {
-            openFileChooser();
+            List<File> files = openFileChooser();
+            FileUtil.handleNewFiles(files);
         });
     }
 
-    private List<java.io.File> openFileChooser() {
+    private List<File> openFileChooser() {
         FileChooser fileChooser = new FileChooser();
-        List<java.io.File> files = fileChooser.showOpenMultipleDialog(ChecksumSharerApplication.getPrimaryStage());
+        List<File> files = fileChooser.showOpenMultipleDialog(ChecksumSharerApplication.getPrimaryStage());
         logger.info("Chosen file(s): " + files);
-        insertFilesIntoDB(files);
         return files;
     }
-
 }

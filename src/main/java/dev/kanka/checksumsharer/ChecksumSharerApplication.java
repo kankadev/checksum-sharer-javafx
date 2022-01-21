@@ -1,8 +1,8 @@
 package dev.kanka.checksumsharer;
 
 import dev.kanka.checksumsharer.dao.Database;
-import dev.kanka.checksumsharer.dao.FileDAO;
 import dev.kanka.checksumsharer.utils.Alerts;
+import dev.kanka.checksumsharer.utils.FileUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -67,10 +67,9 @@ public class ChecksumSharerApplication extends Application {
         return primaryStage;
     }
 
-    private List<File> handleDragAndDropFiles(Dragboard dragboard) {
-        List<java.io.File> files = dragboard.getFiles();
-        logger.info("Dropped files: " + files);
-        FileDAO.insertFilesIntoDB(files);
-        return files;
+    private void handleDragAndDropFiles(Dragboard dragboard) {
+        List<File> newFiles = dragboard.getFiles();
+        logger.info("Dropped files: " + newFiles);
+        FileUtil.handleNewFiles(newFiles);
     }
 }
