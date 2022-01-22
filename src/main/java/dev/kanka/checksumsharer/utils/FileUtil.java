@@ -12,7 +12,9 @@ import java.io.File;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -53,11 +55,10 @@ public class FileUtil {
     }
 
     public static void handleNewFiles(List<File> files) {
-        logger.debug("handleNewFiles()");
-
         if (files != null && !files.isEmpty()) {
-            ExecutorService exec = Executors.newCachedThreadPool();
+            ExecutorService executorService = Executors.newCachedThreadPool();
             List<ChecksumCalculationTask> tasks = new ArrayList<>(Algorithm.values().length);
+            List<Future<KnkFile>> futures = new ArrayList<>();
 
             for (File file : files) {
                 logger.debug("handle file {}", file);
@@ -66,57 +67,45 @@ public class FileUtil {
 
                 for (Algorithm algorithm : Algorithm.values()) {
                     ChecksumCalculationTask task = new ChecksumCalculationTask(knkFile, algorithm);
-                    logger.debug(task);
                     tasks.add(task);
-                    exec.execute(task);
+                    Future<KnkFile> knkFileFuture = executorService.submit(task);
+                    futures.add(knkFileFuture);
                 }
             }
 
-            logger.debug("All files were added to the tasks queue and processing was started.");
-
-            // Create a `Task` that waits until all `ChecksumCalculationTask`s finished and processes them all
-            Task<Void> processCompletedTasks = new Task<>() {
+            Task<HashSet<KnkFile>> processCompletedTasks = new Task<>() {
                 @Override
-                protected Void call() throws Exception {
-                    logger.debug("processCompletedTasks#call()");
+                protected HashSet<KnkFile> call() throws Exception {
+                    HashSet<KnkFile> finishedFiles = new HashSet();
 
-                    // block until tasks complete
-                    for (Future<?> f : tasks) {
-                        f.get();
-                        logger.debug("Future f: " + f);
-                    }
-
-                    logger.debug("Process completed tasks now...");
-
-                    // process completed tasks
-                    for (ChecksumCalculationTask task : tasks) {
-
-                        logger.debug("Process completed task {}", task);
-
-                        String checksum = task.getValue();
-                        logger.debug("checksum: " + checksum);
-                        Algorithm algorithm = task.getAlgorithm();
-                        logger.debug("algorithm: " + algorithm);
-                        KnkFile knkFile = task.getKnkFile();
+                    for (Future<KnkFile> future : futures) {
+                        KnkFile knkFile = future.get();
                         logger.debug(knkFile);
-
-                        switch (task.getAlgorithm()) {
-                            case SHA_256 -> knkFile.setSha256(task.getValue());
-                            case SHA_512 -> knkFile.setSha512(task.getValue());
-                            case SHA3_384 -> knkFile.setSha3384(task.getValue());
-                            case SHA3_512 -> knkFile.setSha3512(task.getValue());
-                        }
-
-                        FileDAO.insertFile(knkFile);
+                        finishedFiles.add(knkFile);
                     }
-
-                    logger.debug("end call();");
-
-                    return null;
+                    return finishedFiles;
                 }
             };
-            exec.submit(processCompletedTasks);
-            exec.shutdown();
+
+            executorService.submit(processCompletedTasks);
+
+            processCompletedTasks.setOnSucceeded(event -> {
+                logger.debug("processCompletedTasks is succeeded.");
+                try {
+                    HashSet<KnkFile> knkFiles = processCompletedTasks.get();
+
+                    for (KnkFile file : knkFiles) {
+                        FileDAO.insertFile(file);
+                    }
+
+                } catch (InterruptedException | ExecutionException e) {
+                    Alerts.error("Fatal error", "Fatal error", e.getStackTrace().toString());
+                }
+            });
+
+
+            executorService.shutdown();
+
         }
     }
 }

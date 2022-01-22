@@ -23,8 +23,6 @@ public class Database {
     }
 
     private static boolean checkDrivers() {
-        logger.debug("checkDrivers()");
-
         try {
             Class.forName("org.sqlite.JDBC");
             DriverManager.registerDriver(new org.sqlite.JDBC());
@@ -36,7 +34,6 @@ public class Database {
     }
 
     private static boolean checkConnection() {
-        logger.debug("checkConnection()");
         try (Connection connection = connect()) {
             if (connection != null) {
                 DatabaseMetaData metaData = connection.getMetaData();
@@ -50,8 +47,6 @@ public class Database {
     }
 
     private static boolean checkTables() {
-        logger.debug("checkTables()");
-
         boolean isOk = false;
 
         try (Connection connection = connect()) {
@@ -82,8 +77,6 @@ public class Database {
     }
 
     protected static Connection connect() {
-        logger.debug("connect()");
-
         String dbPrefix = "jdbc:sqlite:";
         Connection connection;
         try {

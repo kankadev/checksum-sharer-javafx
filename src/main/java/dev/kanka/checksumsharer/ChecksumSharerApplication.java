@@ -24,6 +24,7 @@ public class ChecksumSharerApplication extends Application {
     private static final Logger logger = LogManager.getLogger();
     private static Stage primaryStage;
 
+
     public static void main(String[] args) {
         launch();
     }
@@ -31,6 +32,7 @@ public class ChecksumSharerApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
+
         if (Database.isOK()) {
             FXMLLoader fxmlLoader = new FXMLLoader(ChecksumSharerApplication.class.getResource("app.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 1200, 900);
@@ -41,17 +43,7 @@ public class ChecksumSharerApplication extends Application {
             stage.setScene(scene);
             stage.show();
 
-            scene.setOnDragOver((event -> {
-                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                event.consume();
-            }));
-
-            scene.setOnDragDropped((event -> {
-                Dragboard dragboard = event.getDragboard();
-                if (dragboard.hasFiles()) {
-                    handleDragAndDropFiles(dragboard);
-                }
-            }));
+            initDragAndDrop(scene);
 
         } else {
             Alerts.error(
@@ -61,6 +53,20 @@ public class ChecksumSharerApplication extends Application {
             ).showAndWait();
             Platform.exit();
         }
+    }
+
+    private void initDragAndDrop(Scene scene) {
+        scene.setOnDragOver((event -> {
+            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            event.consume();
+        }));
+
+        scene.setOnDragDropped((event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasFiles()) {
+                handleDragAndDropFiles(dragboard);
+            }
+        }));
     }
 
     public static Stage getPrimaryStage() {
