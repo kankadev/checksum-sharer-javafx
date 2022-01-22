@@ -1,18 +1,14 @@
 package dev.kanka.checksumsharer.hash;
 
 import dev.kanka.checksumsharer.models.KnkFile;
-import javafx.concurrent.Task;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.Callable;
 
-public class ChecksumCalculationTask extends Task<String> {
-
-    private static final Logger logger = LogManager.getLogger();
+public class ChecksumCalculationTask implements Callable<KnkFile> {
 
     private final KnkFile knkFile;
     private final Algorithm algorithm;
@@ -51,16 +47,16 @@ public class ChecksumCalculationTask extends Task<String> {
     }
 
     @Override
-    public String call() throws Exception {
-        return getChecksumOfFile();
-    }
+    public KnkFile call() throws Exception {
+        String checksum = getChecksumOfFile();
 
+        switch (this.algorithm) {
+            case SHA_256 -> knkFile.setSha256(checksum);
+            case SHA_512 -> knkFile.setSha512(checksum);
+            case SHA3_384 -> knkFile.setSha3384(checksum);
+            case SHA3_512 -> knkFile.setSha3512(checksum);
+        }
 
-    public KnkFile getKnkFile() {
         return this.knkFile;
-    }
-
-    public Algorithm getAlgorithm() {
-        return this.algorithm;
     }
 }

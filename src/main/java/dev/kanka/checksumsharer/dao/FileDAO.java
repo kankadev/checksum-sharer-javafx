@@ -39,9 +39,7 @@ public class FileDAO {
 
 
     public static boolean createTable() {
-        logger.debug("createTable()");
-
-        try (Connection connection = Database.connect()) {
+         try (Connection connection = Database.connect()) {
 
             String query = "CREATE TABLE IF NOT EXISTS '" + TABLE_NAME + "' ("
                     + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
