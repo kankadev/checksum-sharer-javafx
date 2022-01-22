@@ -51,7 +51,7 @@ public class ChecksumCalculationTask extends Task<String> {
     }
 
     @Override
-    protected String call() throws Exception {
+    public String call() throws Exception {
         return getChecksumOfFile();
     }
 
