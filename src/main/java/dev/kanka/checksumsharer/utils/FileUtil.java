@@ -55,7 +55,7 @@ public class FileUtil {
     public static void handleNewFiles(List<File> files) {
         logger.debug("handleNewFiles()");
 
-        if (files != null && files.isEmpty()) {
+        if (files != null && !files.isEmpty()) {
             ExecutorService exec = Executors.newCachedThreadPool();
             List<ChecksumCalculationTask> tasks = new ArrayList<>(Algorithm.values().length);
 
