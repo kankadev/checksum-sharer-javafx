@@ -108,9 +108,7 @@ public class FileUtil {
                 }
             });
 
-
             executorService.shutdown();
-
         }
     }
 }
