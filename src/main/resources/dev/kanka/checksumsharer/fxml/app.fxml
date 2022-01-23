@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import org.kordamp.ikonli.javafx.*?>
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <TabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="900.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="50.0"
+                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <tabs>
+                <Tab fx:id="homeTab" text="Home">
+                    <graphic>
+                        <FontIcon iconColor="white" iconLiteral="fas-home" iconSize="16"/>
+                    </graphic>
+                    <content>
+                        <fx:include fx:id="homeTabPage" source="tabs/homeTab.fxml"/>
+                    </content>
+                </Tab>
+                <Tab fx:id="settingsTab" text="Settings">
+                    <graphic>
+                        <FontIcon iconColor="white" iconLiteral="fas-cog" iconSize="16"/>
+                    </graphic>
+                    <content>
+                        <fx:include fx:id="settingsTabPage" source="tabs/settingsTab.fxml"/>
+                    </content>
+                </Tab>
+                <Tab fx:id="imprintTab" text="Imprint">
+                    <graphic>
+                        <FontIcon iconColor="white" iconLiteral="fas-info-circle" iconSize="16"/>
+                    </graphic>
+                    <content>
+                        <fx:include fx:id="imprintTabPage" source="tabs/imprintTab.fxml"/>
+                    </content>
+                </Tab>
+                <Tab fx:id="donateTab" text="Donate">
+                    <graphic>
+                        <FontIcon iconColor="white" iconLiteral="fas-donate" iconSize="16"/>
+                    </graphic>
+                    <content>
+                        <fx:include fx:id="donateTabPage" source="tabs/donateTab.fxml"/>
+                    </content>
+                </Tab>
+                <Tab fx:id="detailsTab" text="Details">
+                    <graphic>
+                        <FontIcon iconColor="white" iconLiteral="fas-donate" iconSize="16"/>
+                    </graphic>
+                    <content>
+                        <fx:include fx:id="detailsTabPage" source="tabs/detailsTab.fxml"/>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <HBox fx:id="footerBox" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+            </padding>
+            <children>
+                <Text fx:id="progressIndicatorText" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="Calculating checksums... please wait."/>
+                <ProgressIndicator fx:id="progressIndicator" maxHeight="-Infinity" maxWidth="-Infinity"/>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>

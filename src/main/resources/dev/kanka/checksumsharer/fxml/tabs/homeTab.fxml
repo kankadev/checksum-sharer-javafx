@@ -20,11 +20,36 @@
                            maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="idColumn" prefWidth="75.0" text="#"/>
-                        <TableColumn fx:id="dateColumn" prefWidth="75.0" text="Date"/>
+                        <TableColumn fx:id="dateColumn" prefWidth="75.0">
+                            <graphic>
+                                <Label text="Date">
+                                    <tooltip>
+                                        <Tooltip text="This is the date when the file was processed here."/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+
+                        </TableColumn>
                         <TableColumn fx:id="fileNameColumn" prefWidth="75.0" text="Filename"/>
                         <TableColumn fx:id="fullPathColumn" prefWidth="75.0" text="Full Path"/>
-                        <TableColumn fx:id="lastModifiedColumn" prefWidth="75.0" text="File Modified Date"/>
-                        <TableColumn fx:id="fileSizeColumn" prefWidth="75.0" text="File Size"/>
+                        <TableColumn fx:id="lastModifiedColumn" prefWidth="75.0">
+                            <graphic>
+                                <Label text="File Modified Date">
+                                    <tooltip>
+                                        <Tooltip text="This modification date comes from the operating system."/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="fileSizeColumn" prefWidth="75.0">
+                            <graphic>
+                                <Label text="File Size">
+                                    <tooltip>
+                                        <Tooltip text="File Size with binary prefix (not SI)"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
                         <TableColumn fx:id="cloudColumn" prefWidth="75.0" text="Cloud"/>
                     </columns>
                     <columnResizePolicy>
