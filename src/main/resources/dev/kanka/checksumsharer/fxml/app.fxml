@@ -45,7 +45,7 @@
                 </Tab>
                 <Tab fx:id="detailsTab" text="Details">
                     <graphic>
-                        <FontIcon iconColor="white" iconLiteral="fas-donate" iconSize="16"/>
+                        <FontIcon iconColor="white" iconLiteral="fas-list" iconSize="16"/>
                     </graphic>
                     <content>
                         <fx:include fx:id="detailsTabPage" source="tabs/detailsTab.fxml"/>
