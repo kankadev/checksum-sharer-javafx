@@ -1,5 +1,6 @@
 package dev.kanka.checksumsharer.utils;
 
+import dev.kanka.checksumsharer.MainController;
 import dev.kanka.checksumsharer.dao.FileDAO;
 import dev.kanka.checksumsharer.hash.Algorithm;
 import dev.kanka.checksumsharer.hash.ChecksumCalculationTask;
@@ -55,6 +56,9 @@ public class FileUtil {
     }
 
     public static void handleNewFiles(List<File> files) {
+
+        MainController.getInstance().setProgressIndicatorVisible(true);
+
         if (files != null && !files.isEmpty()) {
             ExecutorService executorService = Executors.newCachedThreadPool();
             List<ChecksumCalculationTask> tasks = new ArrayList<>(Algorithm.values().length);
@@ -98,6 +102,7 @@ public class FileUtil {
                         FileDAO.insertFile(file);
                     }
 
+                    MainController.getInstance().setProgressIndicatorVisible(false);
                 } catch (InterruptedException | ExecutionException e) {
                     Alerts.error("Fatal error", "Fatal error", e.getStackTrace().toString());
                 }

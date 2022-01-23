@@ -34,10 +34,11 @@ public class ChecksumSharerApplication extends Application {
         primaryStage = stage;
 
         if (Database.isOK()) {
-            FXMLLoader fxmlLoader = new FXMLLoader(ChecksumSharerApplication.class.getResource("app.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(ChecksumSharerApplication.class.getResource("fxml/app.fxml"));
+            fxmlLoader.setController(MainController.getInstance());
             Scene scene = new Scene(fxmlLoader.load(), 1200, 900);
             scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
-            scene.getStylesheets().add(getClass().getResource("/dev/kanka/checksumsharer/css/main.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("css/main.css").toExternalForm());
             stage.setTitle("Checksum Sharer");
             stage.setMaximized(true);
             stage.setScene(scene);
