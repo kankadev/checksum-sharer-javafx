@@ -10,6 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
@@ -109,6 +111,18 @@ public class FileUtil {
             });
 
             executorService.shutdown();
+        }
+    }
+
+    public static void saveTextToFile(String content, File file) {
+        try {
+            PrintWriter writer;
+            writer = new PrintWriter(file);
+            writer.println(content);
+            writer.close();
+        } catch (IOException ex) {
+            Alerts.error("Error", "Export text file failed", ex.getStackTrace().toString());
+            logger.error(ex);
         }
     }
 }

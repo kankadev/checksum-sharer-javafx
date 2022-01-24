@@ -39,7 +39,7 @@ public class FileDAO {
 
 
     public static boolean createTable() {
-         try (Connection connection = Database.connect()) {
+        try (Connection connection = Database.connect()) {
 
             String query = "CREATE TABLE IF NOT EXISTS '" + TABLE_NAME + "' ("
                     + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -75,6 +75,7 @@ public class FileDAO {
             KNK_FILES.clear();
             while (rs.next()) {
                 KnkFile knkFile = new KnkFile(
+                        rs.getInt(idColumn),
                         rs.getTimestamp(dateColumn),
                         rs.getString(fileNameColumn),
                         rs.getString(fullPathColumn),
@@ -83,8 +84,8 @@ public class FileDAO {
                         rs.getString(sha256Column),
                         rs.getString(sha512Column),
                         rs.getString(sha3384Column),
-                        rs.getString(sha3512Column),
-                        rs.getInt(idColumn));
+                        rs.getString(sha3512Column)
+                );
                 logger.debug(knkFile);
                 KNK_FILES.add(knkFile);
             }
