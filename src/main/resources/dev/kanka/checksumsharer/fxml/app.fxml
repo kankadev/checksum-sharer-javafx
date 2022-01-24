@@ -43,14 +43,6 @@
                         <fx:include fx:id="donateTabPage" source="tabs/donateTab.fxml"/>
                     </content>
                 </Tab>
-                <Tab fx:id="detailsTab" text="Details">
-                    <graphic>
-                        <FontIcon iconColor="white" iconLiteral="fas-list" iconSize="16"/>
-                    </graphic>
-                    <content>
-                        <fx:include fx:id="detailsTabPage" source="tabs/detailsTab.fxml"/>
-                    </content>
-                </Tab>
             </tabs>
         </TabPane>
         <HBox fx:id="footerBox" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"

@@ -30,7 +30,7 @@ public class KnkFile extends java.io.File {
         this.sha3512 = new SimpleStringProperty();
     }
 
-    public KnkFile(Timestamp ts, String fileName, String fullPath, Long lastModified, Long fileSize, String sha256, String sha512, String sha3384, String sha3512, int id) {
+    public KnkFile(int id, Timestamp ts, String fileName, String fullPath, Long lastModified, Long fileSize, String sha256, String sha512, String sha3384, String sha3512) {
         super(fullPath);
         this.date = new SimpleObjectProperty<>(ts);
         this.fileName = new SimpleStringProperty(fileName);
@@ -42,6 +42,26 @@ public class KnkFile extends java.io.File {
         this.sha512 = new SimpleStringProperty(sha512);
         this.sha3384 = new SimpleStringProperty(sha3384);
         this.sha3512 = new SimpleStringProperty(sha3512);
+    }
+
+    public String formatForTextFile() {
+        StringBuilder stringBuilder = new StringBuilder();
+        String separator = System.getProperty("line.separator");
+
+        stringBuilder.append("ID: ").append("\t\t\t\t\t").append(id.get()).append(separator)
+                .append("Date: ").append("\t\t\t\t\t").append(date.get()).append(separator)
+                .append("File Name: ").append("\t\t\t\t").append(fileName.get()).append(separator)
+                .append("Full Path: ").append("\t\t\t\t").append(fullPath.get()).append(separator)
+                .append("Last Modified Date: ").append("\t").append(lastModified.get()).append(separator)
+                .append("File Size: ").append("\t\t\t\t").append(fileSize.get()).append(separator)
+                .append("SHA-256: ").append("\t\t\t\t").append(sha256.get()).append(separator)
+                .append("SHA-512: ").append("\t\t\t\t").append(sha512.get()).append(separator)
+                .append("SHA3-384: ").append("\t\t\t\t").append(sha3384.get()).append(separator)
+                .append("SHA3-512: ").append("\t\t\t\t").append(sha3512.get()).append(separator)
+                .append(separator).append("----------------------------------------------------------------------------------------------").append(separator)
+                .append("Checksums calculated with Checksum Sharer: https://github.com/kankadev/checksum-sharer-javafx/");
+
+        return stringBuilder.toString();
     }
 
     public int getId() {
@@ -68,6 +88,42 @@ public class KnkFile extends java.io.File {
         return fileSize.get();
     }
 
+    public String getSha256() {
+        return sha256.get();
+    }
+
+    public String getSha512() {
+        return sha512.get();
+    }
+
+    public String getSha3384() {
+        return sha3384.get();
+    }
+
+    public String getSha3512() {
+        return sha3512.get();
+    }
+
+    public void setSha256(String s) {
+        sha256.set(s);
+    }
+
+    public void setSha512(String s) {
+        sha512.set(s);
+    }
+
+    public void setSha3384(String s) {
+        this.sha3384.set(s);
+    }
+
+    public void setSha3512(String s) {
+        this.sha3512.set(s);
+    }
+
+    public ReadOnlyIntegerProperty idProperty() {
+        return id;
+    }
+
     public ReadOnlyObjectProperty dateProperty() {
         return date;
     }
@@ -88,53 +144,22 @@ public class KnkFile extends java.io.File {
         return fileSize;
     }
 
-    public String getSha256() {
-        return sha256.get();
-    }
-
-    public StringProperty sha256Property() {
+    public ReadOnlyStringProperty sha256Property() {
         return sha256;
     }
 
-    public void setSha256(String s) {
-        sha256.set(s);
-    }
-
-    public String getSha512() {
-        return sha512.get();
-    }
-
-    public StringProperty sha512Property() {
+    public ReadOnlyStringProperty sha512Property() {
         return sha512;
     }
 
-    public void setSha512(String s) {
-        sha512.set(s);
-    }
-
-    public String getSha3384() {
-        return sha3384.get();
-    }
-
-    public StringProperty sha3384() {
+    public ReadOnlyStringProperty sha3384Property() {
         return sha3384;
     }
 
-    public void setSha3384(String s) {
-        this.sha3384.set(s);
-    }
-
-    public String getSha3512() {
-        return sha3512.get();
-    }
-
-    public StringProperty sha3512() {
+    public StringProperty sha3512Property() {
         return sha3512;
     }
 
-    public void setSha3512(String s) {
-        this.sha3512.set(s);
-    }
 
     @Override
     public String toString() {

@@ -5,7 +5,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,9 +19,6 @@ public class MainController implements Initializable {
     private static MainController instance;
 
     @FXML
-    Tab detailsTab;
-
-    @FXML
     ProgressIndicator progressIndicator;
 
     @FXML
@@ -32,9 +28,15 @@ public class MainController implements Initializable {
 
     }
 
+    public static MainController getInstance() {
+        if (MainController.instance == null) {
+            MainController.instance = new MainController();
+        }
+        return MainController.instance;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.detailsTab.setDisable(true);
 
         setProgressIndicatorVisible(false);
     }
@@ -44,10 +46,4 @@ public class MainController implements Initializable {
         this.progressIndicatorText.setVisible(b);
     }
 
-    public static MainController getInstance() {
-        if (MainController.instance == null) {
-            MainController.instance = new MainController();
-        }
-        return MainController.instance;
-    }
 }
