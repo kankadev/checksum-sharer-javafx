@@ -8,6 +8,7 @@ import dev.kanka.checksumsharer.utils.FormatUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.StringExpression;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -52,8 +53,6 @@ public class HomeTabController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        logger.debug("initialize()");
-
         initHistoryTableView();
         registerEventHandler();
     }
@@ -169,15 +168,21 @@ public class HomeTabController implements Initializable {
         historyTableView.getSortOrder().addAll(idColumn);
         historyTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        historyTableView.getSelectionModel().selectedItemProperty().addListener((observableValue) -> {
-            KnkFile selectedItem = historyTableView.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                masterDetailPane.setDetailNode(new DetailPane(selectedItem));
+        // Selection
+        historyTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        historyTableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<? super KnkFile>) change -> {
+
+            ObservableList<KnkFile> selectedItems = historyTableView.getSelectionModel().getSelectedItems();
+
+            if (selectedItems != null && selectedItems.size() != 0) {
+                logger.debug("selected items: " + selectedItems.size());
+                masterDetailPane.setDetailNode(new DetailPane(selectedItems));
                 masterDetailPane.setShowDetailNode(true);
             } else {
                 masterDetailPane.setShowDetailNode(false);
             }
         });
+
 
         // MasterDetailPane
         masterDetailPane.setMasterNode(historyTableView);
@@ -201,20 +206,29 @@ public class HomeTabController implements Initializable {
 
     private static class DetailPane extends GridPane {
 
-        private static KnkFile knkFile = null;
+        private static ObservableList<KnkFile> knkFiles = null;
 
-        DetailPane(KnkFile knkFile) {
-            DetailPane.knkFile = knkFile;
+        DetailPane(ObservableList<KnkFile> knkFiles) {
+            DetailPane.knkFiles = knkFiles;
 
-            if (knkFile != null) {
-                createGui();
+            if (knkFiles != null && !knkFiles.isEmpty()) {
+                prepare();
+                if (knkFiles.size() == 1) {
+                    createGuiForSingleFile();
+                } else {
+                    createGuiForMultipleItems();
+                }
             }
         }
 
-        private void createGui() {
+        private void prepare() {
             this.setHgap(10);
             this.setVgap(10);
             this.setPadding(new Insets(10));
+        }
+
+        private void createGuiForSingleFile() {
+            KnkFile knkFile = knkFiles.get(0);
 
             Text idText = new Text("ID");
             Text timestampText = new Text("Timestamp (GMT)");
@@ -263,7 +277,7 @@ public class HomeTabController implements Initializable {
             fontIcon.setIconSize(16);
             fontIcon.setIconColor(Color.WHITE);
             deleteButton.setGraphic(fontIcon);
-            deleteButton.setTooltip(new Tooltip("Delete the entry only from this software, not from disk."));
+            deleteButton.setTooltip(new Tooltip("Delete the entry only from this software, not original files from disk."));
             deleteButton.setOnAction(event -> {
                 FileDAO.delete(knkFile.getId());
             });
@@ -298,12 +312,34 @@ public class HomeTabController implements Initializable {
             this.add(exportTextFileButton, 1, 11);
         }
 
+        private void createGuiForMultipleItems() {
+            // Number of selected items
+            Text numberSelectedText = new Text();
+            numberSelectedText.setText("Selected items: " + knkFiles.size());
+            this.add(numberSelectedText, 0, 0);
+
+            // Delete Button
+            Button deleteButton = new Button("Delete selected entries");
+            deleteButton.getStyleClass().addAll("btn", "btn-danger");
+            FontIcon fontIcon = new FontIcon();
+            fontIcon.setIconLiteral("far-trash-alt");
+            fontIcon.setIconSize(16);
+            fontIcon.setIconColor(Color.WHITE);
+            deleteButton.setGraphic(fontIcon);
+            deleteButton.setTooltip(new Tooltip("Delete selected entries only from this software, not the original files from disk."));
+            deleteButton.setOnAction(event -> {
+                FileDAO.delete(knkFiles);
+            });
+
+            this.add(deleteButton, 0, 1);
+        }
+
         private void createTextField(StringExpression property, int column, int row, String toolTipText) {
             TextField textField = new TextField();
             textField.textProperty().bind(property);
             textField.setEditable(false);
-            textField.setMinWidth(900);
-            if(toolTipText != null && !toolTipText.isEmpty()) {
+            textField.setPrefWidth(900);
+            if (toolTipText != null && !toolTipText.isEmpty()) {
                 textField.setTooltip(new Tooltip(toolTipText));
             }
             this.add(textField, column, row);

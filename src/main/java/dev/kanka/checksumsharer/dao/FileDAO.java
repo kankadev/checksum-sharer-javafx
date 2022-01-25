@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -158,6 +159,13 @@ public class FileDAO {
         Optional<KnkFile> file = getFile(id);
         file.ifPresent(KNK_FILES::remove);
 
+    }
+
+    public static void delete(List<KnkFile> files) {
+        for(KnkFile knkFile : files) {
+            CRUDHelper.delete(TABLE_NAME, knkFile.getId());
+        }
+        updateFilesFromDB();
     }
 
     public static Optional<KnkFile> getFile(int id) {
