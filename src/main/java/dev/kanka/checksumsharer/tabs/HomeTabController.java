@@ -4,9 +4,10 @@ import dev.kanka.checksumsharer.ChecksumSharerApplication;
 import dev.kanka.checksumsharer.dao.FileDAO;
 import dev.kanka.checksumsharer.models.KnkFile;
 import dev.kanka.checksumsharer.utils.FileUtil;
+import dev.kanka.checksumsharer.utils.FormatUtil;
 import javafx.application.Platform;
+import javafx.beans.binding.StringExpression;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -30,9 +31,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.File;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -72,9 +70,9 @@ public class HomeTabController implements Initializable {
         idColumn.setMinWidth(40);
         idColumn.setMaxWidth(50);
 
-        // Date Column
-        TableColumn<KnkFile, Timestamp> dateColumn = new TableColumn<>("Date");
-        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        // Timestamp Column
+        TableColumn<KnkFile, Timestamp> timestampColumn = new TableColumn<>("Timestamp (GMT)");
+        timestampColumn.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
 
         // Filename Column
         TableColumn<KnkFile, String> fileNameColumn = new TableColumn<>("Filename");
@@ -97,9 +95,7 @@ public class HomeTabController implements Initializable {
                 if (value == null || empty) {
                     setText("");
                 } else {
-                    Date date = new Date(value);
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    setText(dateFormat.format(date));
+                    setText(FormatUtil.getTimestamp(value));
                     // setGraphic(); // TODO check difference between this and setText()
                 }
             }
@@ -117,13 +113,13 @@ public class HomeTabController implements Initializable {
                 if (value == null || empty) {
                     setText("");
                 } else {
-                    setText(FileUtil.humanReadableByteCountBin((Long) value) + " (" + value + " Bytes)");
+                    setText(FormatUtil.getFileSize(value));
                 }
             }
         });
 
 
-        historyTableView.getColumns().addAll(idColumn, dateColumn, fileNameColumn, fullPathColumn, fileSizeColumn, lastModifiedColumn);
+        historyTableView.getColumns().addAll(idColumn, timestampColumn, fileNameColumn, fullPathColumn, fileSizeColumn, lastModifiedColumn);
 
         historyTableView.setPlaceholder(new Label("No files for which the checksums have been calculated yet."));
 
@@ -221,7 +217,7 @@ public class HomeTabController implements Initializable {
             this.setPadding(new Insets(10));
 
             Text idText = new Text("ID");
-            Text dateText = new Text("Date");
+            Text timestampText = new Text("Timestamp (GMT)");
             Text filenameText = new Text("File Name");
             Text fullPathText = new Text("Full Path");
             Text fileSizeText = new Text("File Size (binary prefix)");
@@ -233,7 +229,7 @@ public class HomeTabController implements Initializable {
 
             // Labels
             this.add(idText, 0, 0);
-            this.add(dateText, 0, 1);
+            this.add(timestampText, 0, 1);
             this.add(filenameText, 0, 2);
             this.add(fullPathText, 0, 3);
             this.add(fileSizeText, 0, 4);
@@ -244,24 +240,20 @@ public class HomeTabController implements Initializable {
             this.add(sha3512Text, 0, 9);
 
             // Values
-            createTextField(knkFile.idProperty().asString(), 1, 0);
-            createTextField(knkFile.dateProperty().asString(), 1, 1);
-            createTextField(knkFile.fileNameProperty(), 1, 2);
-            createTextField(knkFile.fullPathProperty(), 1, 3);
+            createTextField(knkFile.idProperty().asString(), 1, 0, "ID in SQLite database");
+            createTextField(knkFile.timestampProperty().asString(), 1, 1, "Timestamp of inserting this entry in the database");
+            createTextField(knkFile.fileNameProperty(), 1, 2, null);
+            createTextField(knkFile.fullPathProperty(), 1, 3, null);
 
-            long fileSize = knkFile.fileSizeProperty().get();
-            String humanReadableByteCountBin = FileUtil.humanReadableByteCountBin(fileSize) + " (" + fileSize + " Bytes)";
-            createTextField(new SimpleStringProperty(humanReadableByteCountBin), 1, 4);
+            createTextField(new SimpleStringProperty(FormatUtil.getFileSize(knkFile.getFileSize())), 1, 4, null);
 
-            long lastModifiedDate = knkFile.lastModifiedProperty().get();
-            Date date = new Date(lastModifiedDate);
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            createTextField(new SimpleStringProperty(dateFormat.format(date)), 1, 5);
+            long lastModifiedDate = knkFile.getLastModified();
+            createTextField(new SimpleStringProperty(FormatUtil.getTimestamp(lastModifiedDate)), 1, 5, null);
 
-            createTextField(knkFile.sha256Property(), 1, 6);
-            createTextField(knkFile.sha512Property(), 1, 7);
-            createTextField(knkFile.sha3384Property(), 1, 8);
-            createTextField(knkFile.sha3512Property(), 1, 9);
+            createTextField(knkFile.sha256Property(), 1, 6, null);
+            createTextField(knkFile.sha512Property(), 1, 7, null);
+            createTextField(knkFile.sha3384Property(), 1, 8, null);
+            createTextField(knkFile.sha3512Property(), 1, 9, null);
 
             // Delete Button
             Button deleteButton = new Button("Delete entry");
@@ -285,7 +277,7 @@ public class HomeTabController implements Initializable {
             icon.setIconLiteral("fas-file-export");
             icon.setIconColor(Color.WHITE);
             icon.setIconSize(16);
-            exportTextFileButton.setGraphic(fontIcon);
+            exportTextFileButton.setGraphic(icon);
             exportTextFileButton.setTooltip(new Tooltip("Exports all details into a text file."));
             exportTextFileButton.setOnAction(event -> {
                 FileChooser fileChooser = new FileChooser();
@@ -306,11 +298,14 @@ public class HomeTabController implements Initializable {
             this.add(exportTextFileButton, 1, 11);
         }
 
-        private void createTextField(ObservableValue property, int column, int row) {
+        private void createTextField(StringExpression property, int column, int row, String toolTipText) {
             TextField textField = new TextField();
             textField.textProperty().bind(property);
             textField.setEditable(false);
             textField.setMinWidth(900);
+            if(toolTipText != null && !toolTipText.isEmpty()) {
+                textField.setTooltip(new Tooltip(toolTipText));
+            }
             this.add(textField, column, row);
 
             Button copyButton = new Button("Copy");
