@@ -1,43 +1,72 @@
 package dev.kanka.checksumsharer.models;
 
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class Settings {
 
-    public static final String[] LANGUAGES = {"English", "German"};
+    private static final String[] LANGUAGES = {"English", "Deutsch"};
+    private static final String[] DATE_FORMATS = {"yyyy.MM.dd HH:mm:ss", "dd.MM.yyyy HH:mm:ss"};
 
-    private ListProperty<String> language = new SimpleListProperty<>(FXCollections.observableArrayList( LANGUAGES));
+    private ObjectProperty<String> language = new SimpleObjectProperty<>(LANGUAGES[0]);
+    private ObjectProperty<String> dateFormat = new SimpleObjectProperty<>(DATE_FORMATS[0]);
 
-    private ListProperty<String> dateFormat = new SimpleListProperty<>(FXCollections.observableArrayList("yyyy.MM.dd HH:mm:ss", "dd.MM.yyyy HH:mm:ss"));
+    private ListProperty<String> allLanguages = new SimpleListProperty<>(FXCollections.observableArrayList(LANGUAGES));
 
-    private SimpleStringProperty exportLocation = new SimpleStringProperty();
+    private ListProperty<String> allDateFormats = new SimpleListProperty<>(FXCollections.observableArrayList(DATE_FORMATS));
 
-    public ObservableList<String> getLanguage() {
+    // TODO
+    private SimpleListProperty<String> exportLocations = new SimpleListProperty<>();
+
+    private SimpleStringProperty exportLocation = new SimpleStringProperty("");
+
+    public String getLanguage() {
         return language.get();
     }
 
-    public ListProperty<String> languageProperty() {
+    public ObjectProperty<String> languageProperty() {
         return language;
     }
 
-    public void setLanguage(ObservableList<String> language) {
+    public void setLanguage(String language) {
         this.language.set(language);
     }
 
-    public ObservableList<String> getDateFormat() {
+    public String getDateFormat() {
         return dateFormat.get();
     }
 
-    public ListProperty<String> dateFormatProperty() {
+    public ObjectProperty<String> dateFormatProperty() {
         return dateFormat;
     }
 
-    public void setDateFormat(ObservableList<String> dateFormat) {
+    public void setDateFormat(String dateFormat) {
         this.dateFormat.set(dateFormat);
+    }
+
+    public ObservableList<String> getAllLanguages() {
+        return allLanguages.get();
+    }
+
+    public ListProperty<String> allLanguagesProperty() {
+        return allLanguages;
+    }
+
+    public void setAllLanguages(ObservableList<String> allLanguages) {
+        this.allLanguages.set(allLanguages);
+    }
+
+    public ObservableList<String> getAllDateFormats() {
+        return allDateFormats.get();
+    }
+
+    public ListProperty<String> allDateFormatsProperty() {
+        return allDateFormats;
+    }
+
+    public void setAllDateFormats(ObservableList<String> allDateFormats) {
+        this.allDateFormats.set(allDateFormats);
     }
 
     public String getExportLocation() {

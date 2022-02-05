@@ -103,7 +103,6 @@ public class HomeTabController implements Initializable {
 
         // File Size Column
         TableColumn<KnkFile, Number> fileSizeColumn = new TableColumn<>("File Size");
-
         fileSizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
         fileSizeColumn.setCellFactory(tc -> new TableCell<>() {
             @Override
@@ -127,45 +126,49 @@ public class HomeTabController implements Initializable {
         ObservableList<KnkFile> filesList = FileDAO.getFiles();
         FilteredList<KnkFile> filteredList = new FilteredList<>(filesList, b -> true);
 
-        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> filteredList.setPredicate(knkFile -> {
-
-            // if filter is empty, display all files.
-            if (newValue == null || newValue.isEmpty()) {
-                return true;
-            }
-
-            String searchString = newValue.toLowerCase();
-
-            if (String.valueOf(knkFile.getId()).contains(searchString)) {
-                return true;
-            }
-
-            if (knkFile.getFileName().contains(searchString)) {
-                return true;
-            }
-
-            if (knkFile.getFullPath().contains(searchString)) {
-                return true;
-            }
-
-            if (String.valueOf(knkFile.getFileSize()).contains(searchString)) {
-                return true;
-            }
-
-            if (String.valueOf(knkFile.getLastModified()).contains(searchString)) {
-                return true;
-            }
-
-            return false;
-        }));
 
         SortedList<KnkFile> sortedList = new SortedList<>(filteredList);
         sortedList.comparatorProperty().bind(historyTableView.comparatorProperty());
 
         historyTableView.setItems(sortedList);
 
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredList.setPredicate(knkFile -> {
+
+                // if filter is empty, display all files.
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String searchString = newValue.toLowerCase();
+
+                if (String.valueOf(knkFile.getId()).contains(searchString)) {
+                    return true;
+                }
+
+                if (knkFile.getFileName().contains(searchString)) {
+                    return true;
+                }
+
+                if (knkFile.getFullPath().contains(searchString)) {
+                    return true;
+                }
+
+                if (String.valueOf(knkFile.getFileSize()).contains(searchString)) {
+                    return true;
+                }
+
+                if (String.valueOf(knkFile.getLastModified()).contains(searchString)) {
+                    return true;
+                }
+
+                return false;
+            });
+        });
+
+
         idColumn.setSortType(TableColumn.SortType.DESCENDING);
-        historyTableView.getSortOrder().addAll(idColumn);
+        historyTableView.getSortOrder().add(idColumn);
         historyTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // Selection
@@ -187,7 +190,6 @@ public class HomeTabController implements Initializable {
         // MasterDetailPane
         masterDetailPane.setMasterNode(historyTableView);
         masterDetailPane.setShowDetailNode(false);
-        masterDetailPane.setDetailNode(new Text("CHILD"));
     }
 
     private void registerEventHandler() {
