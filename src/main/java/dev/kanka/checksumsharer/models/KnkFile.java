@@ -4,6 +4,7 @@ import dev.kanka.checksumsharer.utils.FormatUtil;
 import javafx.beans.property.*;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 public class KnkFile extends java.io.File {
     private final ReadOnlyIntegerWrapper id;
@@ -164,6 +165,23 @@ public class KnkFile extends java.io.File {
         return sha3512.getReadOnlyProperty();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        KnkFile knkFile = (KnkFile) o;
+        return id.equals(knkFile.id) && timestamp.equals(knkFile.timestamp) &&
+                fileName.equals(knkFile.fileName) && fullPath.equals(knkFile.fullPath) &&
+                lastModified.equals(knkFile.lastModified) && fileSize.equals(knkFile.fileSize) &&
+                sha256.equals(knkFile.sha256) && sha512.equals(knkFile.sha512) &&
+                sha3384.equals(knkFile.sha3384) && sha3512.equals(knkFile.sha3512);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, timestamp, fileName, fullPath, lastModified, fileSize, sha256, sha512, sha3384, sha3512);
+    }
 
     @Override
     public String toString() {
