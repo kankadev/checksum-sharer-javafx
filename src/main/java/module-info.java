@@ -13,6 +13,8 @@ module dev.kanka.checksumsharer {
 
     requires java.sql;
     requires org.xerial.sqlitejdbc;
+    requires com.dlsc.preferencesfx;
+    requires java.desktop;
 
     opens dev.kanka.checksumsharer to javafx.fxml;
     exports dev.kanka.checksumsharer;

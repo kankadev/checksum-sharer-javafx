@@ -3,6 +3,7 @@ package dev.kanka.checksumsharer.tabs;
 import dev.kanka.checksumsharer.ChecksumSharerApplication;
 import dev.kanka.checksumsharer.dao.FileDAO;
 import dev.kanka.checksumsharer.models.KnkFile;
+import dev.kanka.checksumsharer.utils.Alerts;
 import dev.kanka.checksumsharer.utils.FileUtil;
 import dev.kanka.checksumsharer.utils.FormatUtil;
 import javafx.application.Platform;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class HomeTabController implements Initializable {
@@ -50,6 +52,9 @@ public class HomeTabController implements Initializable {
 
     @FXML
     Button fileChooserButton;
+
+    @FXML
+    Button settingsButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -197,6 +202,10 @@ public class HomeTabController implements Initializable {
             List<File> files = openFileChooser();
             FileUtil.handleNewFiles(files);
         });
+
+        settingsButton.setOnAction((event) -> {
+            // TODO
+        });
     }
 
     private List<File> openFileChooser() {
@@ -281,7 +290,12 @@ public class HomeTabController implements Initializable {
             deleteButton.setGraphic(fontIcon);
             deleteButton.setTooltip(new Tooltip("Delete the entry only from this software, not original files from disk."));
             deleteButton.setOnAction(event -> {
-                FileDAO.delete(knkFile.getId());
+                Alert conformationDialog = Alerts.conformation("Delete file entry", knkFile.getFileName(),
+                        "Click OK if you want to delete the file entry from database. The original file will not be deleted.");
+                Optional<ButtonType> result = conformationDialog.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    FileDAO.delete(knkFile.getId());
+                }
             });
 
             this.add(deleteButton, 0, 11);
@@ -330,7 +344,12 @@ public class HomeTabController implements Initializable {
             deleteButton.setGraphic(fontIcon);
             deleteButton.setTooltip(new Tooltip("Delete selected entries only from this software, not the original files from disk."));
             deleteButton.setOnAction(event -> {
-                FileDAO.delete(knkFiles);
+                Alert conformationDialog = Alerts.conformation("Delete file entries", knkFiles.size() + " selected files for deletion",
+                        "Click OK if you want to delete the file entries from database. The original files will not be deleted.");
+                Optional<ButtonType> result = conformationDialog.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    FileDAO.delete(knkFiles);
+                }
             });
 
             this.add(deleteButton, 0, 1);

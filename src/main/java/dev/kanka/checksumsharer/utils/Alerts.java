@@ -11,4 +11,12 @@ public class Alerts {
         alert.setContentText(description);
         return alert;
     }
+
+    public static Alert conformation(String windowTitle, String header, String description) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(windowTitle);
+        alert.setHeaderText(header);
+        alert.setContentText(description);
+        return alert;
+    }
 }
