@@ -4,6 +4,7 @@ import dev.kanka.checksumsharer.dao.Database;
 import dev.kanka.checksumsharer.utils.Alerts;
 import dev.kanka.checksumsharer.utils.FileUtil;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -23,7 +24,6 @@ public class ChecksumSharerApplication extends Application {
 
     private static final Logger logger = LogManager.getLogger();
     private static Stage primaryStage;
-
 
     public static void main(String[] args) {
         launch();
