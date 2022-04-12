@@ -4,7 +4,6 @@ import dev.kanka.checksumsharer.dao.Database;
 import dev.kanka.checksumsharer.utils.Alerts;
 import dev.kanka.checksumsharer.utils.FileUtil;
 import javafx.application.Application;
-import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -22,7 +21,7 @@ import java.util.List;
 
 public class ChecksumSharerApplication extends Application {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static Stage primaryStage;
 
     public static void main(String[] args) {
@@ -78,7 +77,7 @@ public class ChecksumSharerApplication extends Application {
 
     private void handleDragAndDropFiles(Dragboard dragboard) {
         List<File> newFiles = dragboard.getFiles();
-        logger.info("Dropped files: " + newFiles);
+        LOGGER.info("Dropped files: " + newFiles);
         FileUtil.handleNewFiles(newFiles);
     }
 }

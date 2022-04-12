@@ -39,7 +39,7 @@ import java.util.ResourceBundle;
 
 public class HomeTabController implements Initializable {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @FXML
     MasterDetailPane masterDetailPane;
@@ -183,7 +183,7 @@ public class HomeTabController implements Initializable {
             ObservableList<KnkFile> selectedItems = historyTableView.getSelectionModel().getSelectedItems();
 
             if (selectedItems != null && selectedItems.size() != 0) {
-                logger.debug("selected items: " + selectedItems.size());
+                LOGGER.debug("selected items: " + selectedItems.size());
                 masterDetailPane.setDetailNode(new DetailPane(selectedItems));
                 masterDetailPane.setShowDetailNode(true);
             } else {
@@ -211,7 +211,7 @@ public class HomeTabController implements Initializable {
     private List<File> openFileChooser() {
         FileChooser fileChooser = new FileChooser();
         List<File> files = fileChooser.showOpenMultipleDialog(ChecksumSharerApplication.getPrimaryStage());
-        logger.info("Chosen file(s): " + files);
+        LOGGER.info("Chosen file(s): " + files);
         return files;
     }
 
@@ -328,6 +328,9 @@ public class HomeTabController implements Initializable {
             this.add(exportTextFileButton, 1, 11);
         }
 
+        /**
+         * creates the GUI for multiple selected items in table
+         */
         private void createGuiForMultipleItems() {
             // Number of selected items
             Text numberSelectedText = new Text();

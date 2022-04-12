@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 public class ImprintTabController implements Initializable {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String KANKA_DEV_URL = "https://kanka.dev?ref=checksumsharer-javafx";
 
     @FXML
@@ -47,7 +47,7 @@ public class ImprintTabController implements Initializable {
                 try {
                     Desktop.getDesktop().browse(new URL(KANKA_DEV_URL).toURI());
                 } catch (IOException | URISyntaxException e) {
-                    logger.error(e);
+                    LOGGER.error(e);
                     Alerts.error("Error", "Can't open browser", e.getLocalizedMessage()).show();
                 }
             });

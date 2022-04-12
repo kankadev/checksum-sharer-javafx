@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class CRUDHelper {
 
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger();
+    private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
     public static Object read(String tableName, String fieldName, int fieldDataType,
                               String indexFieldName, int indexDataType, Object index) {
@@ -37,7 +37,7 @@ public class CRUDHelper {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Could not fetch from " + tableName + " by index " + index + " and column " + fieldName, e);
+            LOGGER.error("Could not fetch from " + tableName + " by index " + index + " and column " + fieldName, e);
 
             return null;
         }
@@ -77,7 +77,7 @@ public class CRUDHelper {
             return preparedStatement.executeUpdate(); //number of affected rows
 
         } catch (SQLException e) {
-            logger.error("Could not add file to database", e);
+            LOGGER.error("Could not add file to database", e);
 
             return -1;
         }
@@ -116,7 +116,7 @@ public class CRUDHelper {
                 }
             }
 
-            logger.debug("preparedStatement: " + preparedStatement.toString());
+            LOGGER.debug("preparedStatement: " + preparedStatement.toString());
 
             int affectedRows = preparedStatement.executeUpdate();
             // check the affected rows
@@ -129,7 +129,7 @@ public class CRUDHelper {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Could not add file to database", e);
+            LOGGER.error("Could not add file to database", e);
             return -1;
         }
         return -1;
@@ -150,7 +150,7 @@ public class CRUDHelper {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Could not delete from " + tableName + " by id " + id + "  because " + e.getCause(), e);
+            LOGGER.error("Could not delete from " + tableName + " by id " + id + "  because " + e.getCause(), e);
 
             return -1;
         }

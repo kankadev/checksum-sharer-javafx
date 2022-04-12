@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 
 public class SettingsTabController implements Initializable, ViewMixin {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final ResourceBundle rbEn = ResourceBundle.getBundle(ResourceBundles.SETTINGS.getBundleName(), new Locale("en", "UK"));
     private final ResourceBundle rbDe = ResourceBundle.getBundle(ResourceBundles.SETTINGS.getBundleName(), new Locale("de", "DE"));
