@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private static MainController instance;
 

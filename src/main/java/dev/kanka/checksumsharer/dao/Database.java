@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 
 public class Database {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String[] requiredTables = {FileDAO.TABLE_NAME};
     public static final String DB_RESOURCE = ChecksumSharerApplication.class.getResource("databases/checksumsharer.db").toExternalForm();
@@ -28,7 +28,7 @@ public class Database {
             DriverManager.registerDriver(new org.sqlite.JDBC());
             return true;
         } catch (ClassNotFoundException | SQLException e) {
-            logger.error("Could not start SQLite Drivers", e);
+            LOGGER.error("Could not start SQLite Drivers", e);
             return false;
         }
     }
@@ -37,11 +37,11 @@ public class Database {
         try (Connection connection = connect()) {
             if (connection != null) {
                 DatabaseMetaData metaData = connection.getMetaData();
-                logger.debug(metaData.toString());
+                LOGGER.debug(metaData.toString());
             }
             return connection != null;
         } catch (SQLException e) {
-            logger.error("Could not connect to database", e);
+            LOGGER.error("Could not connect to database", e);
             return false;
         }
     }
@@ -64,14 +64,14 @@ public class Database {
                     }
                 }
             } else {
-                logger.error("Connection is null.");
+                LOGGER.error("Connection is null.");
                 isOk = false;
             }
 
             return isOk;
 
         } catch (SQLException e) {
-            logger.error("Could not find tables in database", e);
+            LOGGER.error("Could not find tables in database", e);
             return false;
         }
     }
@@ -82,7 +82,7 @@ public class Database {
         try {
             connection = DriverManager.getConnection(dbPrefix + DB_RESOURCE);
         } catch (SQLException e) {
-            logger.error("Could not connect to SQLite DB at " + DB_RESOURCE, e);
+            LOGGER.error("Could not connect to SQLite DB at " + DB_RESOURCE, e);
             return null;
         }
         return connection;

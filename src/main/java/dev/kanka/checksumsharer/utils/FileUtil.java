@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
 
 public class FileUtil {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private FileUtil() {
         throw new AssertionError("Don't instantiate this class.");
@@ -67,7 +67,7 @@ public class FileUtil {
             List<Future<KnkFile>> futures = new ArrayList<>();
 
             for (File file : files) {
-                logger.debug("handle file {}", file);
+                LOGGER.debug("handle file {}", file);
 
                 KnkFile knkFile = new KnkFile(file.getAbsolutePath());
 
@@ -86,7 +86,7 @@ public class FileUtil {
 
                     for (Future<KnkFile> future : futures) {
                         KnkFile knkFile = future.get();
-                        logger.debug(knkFile);
+                        LOGGER.debug(knkFile);
                         finishedFiles.add(knkFile);
                     }
                     return finishedFiles;
@@ -96,7 +96,7 @@ public class FileUtil {
             executorService.submit(processCompletedTasks);
 
             processCompletedTasks.setOnSucceeded(event -> {
-                logger.debug("processCompletedTasks is succeeded.");
+                LOGGER.debug("processCompletedTasks is succeeded.");
                 try {
                     HashSet<KnkFile> knkFiles = processCompletedTasks.get();
 
@@ -122,7 +122,7 @@ public class FileUtil {
             writer.close();
         } catch (IOException ex) {
             Alerts.error("Error", "Export text file failed", ex.getStackTrace().toString());
-            logger.error(ex);
+            LOGGER.error(ex);
         }
     }
 }

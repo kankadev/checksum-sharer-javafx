@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class FileDAO {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final String TABLE_NAME = "knkFiles";
     public static final String idColumn = "id";
     public static final String dateColumn = "date";
@@ -60,13 +60,13 @@ public class FileDAO {
 
             return true;
         } catch (SQLException e) {
-            logger.error(e);
+            LOGGER.error(e);
             return false;
         }
     }
 
     private static void updateFilesFromDB() {
-        logger.debug("updateFilesFromDB()");
+        LOGGER.debug("updateFilesFromDB()");
 
         String query = "SELECT * FROM " + TABLE_NAME;
 
@@ -87,11 +87,11 @@ public class FileDAO {
                         rs.getString(sha3384Column),
                         rs.getString(sha3512Column)
                 );
-                logger.debug(knkFile);
+                LOGGER.debug(knkFile);
                 KNK_FILES.add(knkFile);
             }
         } catch (SQLException e) {
-            logger.error("Could not load KNK_FILES from database.", e);
+            LOGGER.error("Could not load KNK_FILES from database.", e);
             KNK_FILES.clear();
         }
     }
