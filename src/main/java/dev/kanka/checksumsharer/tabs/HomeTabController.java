@@ -53,9 +53,6 @@ public class HomeTabController implements Initializable {
     @FXML
     Button fileChooserButton;
 
-    @FXML
-    Button settingsButton;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initHistoryTableView();
@@ -201,10 +198,6 @@ public class HomeTabController implements Initializable {
         fileChooserButton.setOnAction((event) -> {
             List<File> files = openFileChooser();
             FileUtil.handleNewFiles(files);
-        });
-
-        settingsButton.setOnAction((event) -> {
-            // TODO
         });
     }
 

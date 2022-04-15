@@ -2,6 +2,7 @@ package dev.kanka.checksumsharer.enums;
 
 public enum ResourceBundles {
 
+    GENERAL("dev/kanka/checksumsharer/general"),
     SETTINGS("dev/kanka/checksumsharer/settings"),
     MESSAGES("dev/kanka/checksumsharer/messages");
 

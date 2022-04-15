@@ -4,7 +4,6 @@ module dev.kanka.checksumsharer {
     requires javafx.web;
 
     requires org.controlsfx.controls;
-    requires com.dlsc.formsfx;
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
@@ -13,12 +12,13 @@ module dev.kanka.checksumsharer {
 
     requires java.sql;
     requires org.xerial.sqlitejdbc;
-    requires com.dlsc.preferencesfx;
     requires java.desktop;
+    requires java.prefs;
 
     opens dev.kanka.checksumsharer to javafx.fxml;
     exports dev.kanka.checksumsharer;
     exports dev.kanka.checksumsharer.tabs;
     opens dev.kanka.checksumsharer.tabs to javafx.fxml;
     opens dev.kanka.checksumsharer.models to javafx.base;
+    opens dev.kanka.checksumsharer.settings to javafx.base;
 }

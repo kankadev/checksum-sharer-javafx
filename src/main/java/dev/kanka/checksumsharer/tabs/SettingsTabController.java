@@ -1,131 +1,106 @@
 package dev.kanka.checksumsharer.tabs;
 
-import com.dlsc.formsfx.model.structure.Field;
-import com.dlsc.formsfx.model.structure.Form;
-import com.dlsc.formsfx.model.structure.Group;
-import com.dlsc.formsfx.model.structure.Section;
-import com.dlsc.formsfx.model.util.ResourceBundleService;
-import com.dlsc.formsfx.view.renderer.FormRenderer;
-import com.dlsc.formsfx.view.util.ViewMixin;
 import dev.kanka.checksumsharer.enums.ResourceBundles;
-import dev.kanka.checksumsharer.models.Settings;
+import dev.kanka.checksumsharer.settings.Settings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
-public class SettingsTabController implements Initializable, ViewMixin {
+public class SettingsTabController implements Initializable {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final int SPACING = 20;
 
-    private final ResourceBundle rbEn = ResourceBundle.getBundle(ResourceBundles.SETTINGS.getBundleName(), new Locale("en", "UK"));
-    private final ResourceBundle rbDe = ResourceBundle.getBundle(ResourceBundles.SETTINGS.getBundleName(), new Locale("de", "DE"));
-    private final ResourceBundleService rbs = new ResourceBundleService(rbEn);
-
+    private final Preferences preferences = Preferences.userRoot().node(this.getClass().getName());
     private final Settings settings = new Settings();
-    private Form formInstance;
-    private FormRenderer formRenderer;
 
-    private HBox buttonsBox;
-    private Button saveButton;
-    private Button resetButton;
+    // Languages
+    private final ResourceBundle lBundle = ResourceBundle.getBundle(ResourceBundles.SETTINGS.getBundleName());
 
     @FXML
     VBox vBox;
 
-    public Form getFormInstance() {
-        if (formInstance == null) {
-            createForm();
-        }
-        return formInstance;
-    }
-
-    private void createForm() {
-        formInstance = Form.of(
-                Group.of(
-                        Field.ofSingleSelectionType(settings.allLanguagesProperty(), settings.languageProperty())
-                                .label("language.label")
-                                .labelDescription("language.desc"),
-                        Field.ofSingleSelectionType(settings.allDateFormatsProperty(), settings.dateFormatProperty())
-                                .label("date_format.label")
-                                .labelDescription("date_format.desc")
-                ),
-                Section.of(
-                        Field.ofStringType(settings.exportLocationProperty())
-                                .label("export_location.label")
-                                .labelDescription("export_location.desc")
-                ).title("export.section")
-        ).title("settings").i18n(rbs);
-    }
+    ComboBox<String> dateFormatComboBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        init();
+        layout();
+        loadPreference();
+        registerListeners();
     }
 
-    @Override
-    public void initializeParts() {
-        buttonsBox = new HBox();
-        saveButton = new Button(rbs.translate("save_button.text"));
-        saveButton.getStyleClass().addAll("btn", "btn-primary");
-        resetButton = new Button(rbs.translate("reset_button.text"));
-        resetButton.getStyleClass().addAll("btn", "btn-warning");
 
-        formRenderer = new FormRenderer(getFormInstance());
-    }
+    public void layout() {
+        List<HBox> allBoxes = new ArrayList<>();
 
-    @Override
-    public void setupBindings() {
-        saveButton.disableProperty().bind(formInstance.persistableProperty().not());
-        resetButton.disableProperty().bind(formInstance.changedProperty().not());
-    }
+        // Date Format
+        Tooltip dateFormatTooltip = new Tooltip(lBundle.getString("date_format.label"));
+        final Label dateFormatLabel = new Label(lBundle.getString("date_format.label"));
+        dateFormatLabel.setTooltip(dateFormatTooltip);
+        dateFormatComboBox = new ComboBox(settings.getAllDateFormats());
+        dateFormatComboBox.getSelectionModel().select(0);
+        dateFormatComboBox.setTooltip(dateFormatTooltip);
+        dateFormatLabel.setLabelFor(dateFormatComboBox);
+        final HBox dateFormatBox = new HBox();
+        dateFormatBox.getChildren().addAll(dateFormatLabel, dateFormatComboBox);
+        allBoxes.add(dateFormatBox);
 
-    @Override
-    public void setupValueChangedListeners() {
-
-    }
-
-    @Override
-    public void setupEventHandlers() {
+        // Action Buttons
+        final HBox actionButtonsBox = new HBox();
+        Button saveButton = new Button(lBundle.getString("save_button.text"));
         saveButton.setOnAction(event -> {
-            formInstance.persist();
-            changeLanguage(settings.getLanguage());
+            savePreference();
         });
-        resetButton.setOnAction(event -> formInstance.reset());
-    }
+        saveButton.getStyleClass().addAll("btn", "btn-primary");
+        actionButtonsBox.getChildren().add(saveButton);
+        allBoxes.add(actionButtonsBox);
 
-    @Override
-    public void layoutParts() {
-        buttonsBox.setSpacing(20);
-        buttonsBox.getChildren().addAll(saveButton, resetButton);
-        vBox.getChildren().addAll(formRenderer, buttonsBox);
-    }
 
-    /**
-     * Sets the locale of the form.
-     *
-     * @param language The language identifier for the new locale.
-     */
-    public void changeLanguage(String language) {
-        switch (language) {
-            case "Deutsch":
-                rbs.changeLocale(rbDe);
-                break;
-            default:
-                rbs.changeLocale(rbEn);
+        for (HBox box : allBoxes) {
+            box.setSpacing(SPACING);
+            box.setAlignment(Pos.CENTER_LEFT);
+            box.getStyleClass().add("settings-box");
         }
+
+        vBox.getChildren().addAll(dateFormatBox, actionButtonsBox);
+        vBox.setSpacing(SPACING);
     }
 
-    @Override
-    public List<String> getStylesheets() {
-        return null;
+
+    private void loadPreference() {
+        settings.languageProperty().set(preferences.get(String.valueOf(settings.languageProperty().hashCode()), Settings.LANGUAGES[0]));
+        settings.dateFormatProperty().set(preferences.get(String.valueOf(settings.allDateFormatsProperty().hashCode()), Settings.DATE_FORMATS[0]));
+
+        dateFormatComboBox.valueProperty().bindBidirectional(settings.dateFormatProperty());
     }
+
+    public void savePreference() {
+        LOGGER.debug("save preferences");
+
+        preferences.put(String.valueOf(settings.languageProperty().hashCode()), settings.getLanguage());
+        preferences.put(String.valueOf(settings.allDateFormatsProperty().hashCode()), settings.getDateFormat());
+
+        handleSettings();
+    }
+
+    private void registerListeners() {
+    }
+
+    private void handleSettings() {
+    }
+
 }

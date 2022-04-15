@@ -56,13 +56,10 @@ BUTTONS
 }
 
 /*
-FORMSFX
+SETTINGS
 */
-.simple-control > .label {
-    -fx-font-weight: bold;
-}
 
-.simple-control > .field-label-description {
-    -fx-font-weight: normal;
-    -fx-font-style: italic;
+/* HBox with Label and Field */
+.settings-box {
+
 }
