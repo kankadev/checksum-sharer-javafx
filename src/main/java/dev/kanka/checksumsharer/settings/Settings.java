@@ -11,6 +11,7 @@ public class Settings {
 
     private ObjectProperty<String> language = new SimpleObjectProperty<>(LANGUAGES[0]);
     private ObjectProperty<String> dateFormat = new SimpleObjectProperty<>(DATE_FORMATS[0]);
+    private ObjectProperty<String> localStorageExportPath = new SimpleObjectProperty<>();
 
     private ListProperty<String> allLanguages = new SimpleListProperty<>(FXCollections.observableArrayList(LANGUAGES));
 
@@ -43,6 +44,18 @@ public class Settings {
 
     public void setDateFormat(String dateFormat) {
         this.dateFormat.set(dateFormat);
+    }
+
+    public String getLocalStorageExportPath() {
+        return localStorageExportPath.get();
+    }
+
+    public ObjectProperty<String> localStorageExportPathProperty() {
+        return localStorageExportPath;
+    }
+
+    public void setLocalStorageExportPath(String exportPath) {
+        this.localStorageExportPath.set(exportPath);
     }
 
     public ObservableList<String> getAllLanguages() {

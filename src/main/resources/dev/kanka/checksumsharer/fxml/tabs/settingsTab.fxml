@@ -1,12 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane fx:id="rootPane" prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.kanka.checksumsharer.tabs.SettingsTabController">
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import java.lang.String?>
+<VBox fx:id="rootPane" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="dev.kanka.checksumsharer.tabs.SettingsTabController">
     <children>
-        <VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0"/>
+        <Accordion fx:id="settingsAccordion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0">
+            <panes>
+                <TitledPane fx:id="generalPane" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%general.title">
+                    <content>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0"/>
+                    </content>
+                </TitledPane>
+                <TitledPane fx:id="viewPane" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%view.title">
+                    <content>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                            <children>
+                                <GridPane minWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="NEVER" maxWidth="300.0" minWidth="50.0" prefWidth="150.0"/>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="50.0" prefWidth="150.0"/>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                    </rowConstraints>
+                                    <children>
+                                        <Label text="%date_format.label">
+                                            <graphic>
+
+                                            </graphic>
+                                        </Label>
+                                        <ComboBox fx:id="dateFormatComboBox" minWidth="200.0" prefWidth="200.0" GridPane.columnIndex="1"/>
+                                        <Label text="%date_format.desc" GridPane.columnIndex="2"/>
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </TitledPane>
+                <TitledPane fx:id="cloudPane" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%cloud.title">
+                    <content>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                            <children>
+                                <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <tabs>
+                                        <Tab text="Untitled Tab 1">
+                                            <content>
+                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                                            </content>
+                                        </Tab>
+                                        <Tab text="Untitled Tab 2">
+                                            <content>
+                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                                            </content>
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </TitledPane>
+                <TitledPane fx:id="localStoragePane" animated="false" text="%localstorage.title">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <GridPane alignment="CENTER_LEFT" minWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                          AnchorPane.topAnchor="0.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="NEVER" maxWidth="300.0" minWidth="50.0" prefWidth="150.0"/>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="50.0" prefWidth="150.0"/>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                    </rowConstraints>
+                                    <children>
+                                        <Label text="%localstorage.export.label">
+                                            <graphic>
+
+                                            </graphic>
+                                        </Label>
+                                        <Label text="%localstorage.export.desc" GridPane.columnIndex="2"/>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                              GridPane.valignment="CENTER">
+                                            <children>
+                                                <TextField fx:id="localStorageExportPath"/>
+                                                <Button fx:id="localStorageDirectoryChooserButton" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <FontIcon iconColor="white" iconLiteral="far-folder-open" iconSize="16"/>
+                                                    </graphic>
+                                                    <styleClass>
+                                                        <String fx:value="btn"/>
+                                                        <String fx:value="btn-primary"/>
+                                                    </styleClass>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </AnchorPane>
+
+                    </content>
+                </TitledPane>
+            </panes>
+            <VBox.margin>
+                <Insets bottom="20.0"/>
+            </VBox.margin>
+        </Accordion>
+        <Button fx:id="saveButton" mnemonicParsing="false" text="%save_button.text"/>
     </children>
-</AnchorPane>
+</VBox>
