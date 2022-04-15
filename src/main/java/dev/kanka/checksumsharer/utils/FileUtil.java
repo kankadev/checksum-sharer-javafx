@@ -5,6 +5,8 @@ import dev.kanka.checksumsharer.dao.FileDAO;
 import dev.kanka.checksumsharer.hash.Algorithm;
 import dev.kanka.checksumsharer.hash.ChecksumCalculationTask;
 import dev.kanka.checksumsharer.models.KnkFile;
+import dev.kanka.checksumsharer.settings.PreferenceKeys;
+import dev.kanka.checksumsharer.settings.Settings;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,14 +19,17 @@ import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.prefs.Preferences;
 
 public class FileUtil {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Preferences preferences = Preferences.userRoot().node(Settings.class.getName());
 
     private FileUtil() {
         throw new AssertionError("Don't instantiate this class.");
@@ -101,7 +106,9 @@ public class FileUtil {
                     HashSet<KnkFile> knkFiles = processCompletedTasks.get();
 
                     for (KnkFile file : knkFiles) {
-                        FileDAO.insertFile(file);
+                        int id = FileDAO.insertFile(file);
+                        Optional<KnkFile> knkFile = FileDAO.getFile(id); // TODO improve, because we have two file objects for one purpose here now...
+                        exportChecksumFilesToLocalFileSystem(knkFile.get());
                     }
 
                     MainController.getInstance().setProgressIndicatorVisible(false);
@@ -123,6 +130,20 @@ public class FileUtil {
         } catch (IOException ex) {
             Alerts.error("Error", "Export text file failed", ex.getStackTrace().toString());
             LOGGER.error(ex);
+        }
+    }
+
+    /**
+     * Exports all information about a file including checksums into a text file on the local storage, if the user sets an export directory in the settings.
+     *
+     * @param knkFile
+     */
+    public static void exportChecksumFilesToLocalFileSystem(KnkFile knkFile) {
+        String localStoragePath = preferences.get(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH, null);
+
+        if (localStoragePath != null && !localStoragePath.isEmpty()) {
+            File file = new File(localStoragePath + File.separator + knkFile.getId() + " - " + knkFile.getName() + ".txt");
+            saveTextToFile(knkFile.formatForTextFile(), file);
         }
     }
 }

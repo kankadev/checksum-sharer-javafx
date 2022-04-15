@@ -2,6 +2,7 @@ package dev.kanka.checksumsharer.tabs;
 
 import dev.kanka.checksumsharer.ChecksumSharerApplication;
 import dev.kanka.checksumsharer.enums.ResourceBundles;
+import dev.kanka.checksumsharer.settings.PreferenceKeys;
 import dev.kanka.checksumsharer.settings.Settings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,7 +22,7 @@ public class SettingsTabController implements Initializable {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int SPACING = 20;
 
-    private final Preferences preferences = Preferences.userRoot().node(this.getClass().getName());
+    private final Preferences preferences = Preferences.userRoot().node(Settings.class.getName());
     private final Settings settings = new Settings();
 
     // Languages
@@ -53,6 +54,7 @@ public class SettingsTabController implements Initializable {
         layout();
         loadPreference();
         registerListeners();
+        LOGGER.debug(preferences);
     }
 
     public void layout() {
@@ -69,9 +71,9 @@ public class SettingsTabController implements Initializable {
 
 
     private void loadPreference() {
-        settings.languageProperty().set(preferences.get(String.valueOf(settings.languageProperty().hashCode()), Settings.LANGUAGES[0]));
-        settings.dateFormatProperty().set(preferences.get(String.valueOf(settings.allDateFormatsProperty().hashCode()), Settings.DATE_FORMATS[0]));
-        settings.localStorageExportPathProperty().set(preferences.get(String.valueOf(settings.localStorageExportPathProperty().hashCode()), null));
+        settings.languageProperty().set(preferences.get(PreferenceKeys.LANGUAGE, Settings.LANGUAGES[0]));
+        settings.dateFormatProperty().set(preferences.get(PreferenceKeys.DATE_FORMAT, Settings.DATE_FORMATS[0]));
+        settings.localStorageExportPathProperty().set(preferences.get(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH, null));
         localStorageExportPath.setText(settings.getLocalStorageExportPath()); // TODO: use Bindings
 
         dateFormatComboBox.valueProperty().bindBidirectional(settings.dateFormatProperty());
@@ -80,9 +82,9 @@ public class SettingsTabController implements Initializable {
     public void savePreference() {
         LOGGER.debug("save preferences");
 
-        preferences.put(String.valueOf(settings.languageProperty().hashCode()), settings.getLanguage());
-        preferences.put(String.valueOf(settings.allDateFormatsProperty().hashCode()), settings.getDateFormat());
-        preferences.put(String.valueOf(settings.localStorageExportPathProperty().hashCode()), settings.getLocalStorageExportPath());
+        preferences.put(PreferenceKeys.LANGUAGE, settings.getLanguage());
+        preferences.put(PreferenceKeys.DATE_FORMAT, settings.getDateFormat());
+        preferences.put(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH, settings.getLocalStorageExportPath());
 
         handleSettings();
     }
@@ -94,10 +96,12 @@ public class SettingsTabController implements Initializable {
         localStorageDirectoryChooserButton.setOnAction(actionEvent -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(ChecksumSharerApplication.getPrimaryStage());
-            LOGGER.debug("Selected export directory: " + selectedDirectory.getAbsolutePath());
 
-            settings.setLocalStorageExportPath(selectedDirectory.getAbsolutePath());
-            localStorageExportPath.setText(selectedDirectory.getAbsolutePath());
+            if (selectedDirectory.isDirectory()) {
+                LOGGER.debug("Selected export directory: " + selectedDirectory.getAbsolutePath());
+                settings.setLocalStorageExportPath(selectedDirectory.getAbsolutePath());
+                localStorageExportPath.setText(selectedDirectory.getAbsolutePath());
+            }
         });
     }
 
