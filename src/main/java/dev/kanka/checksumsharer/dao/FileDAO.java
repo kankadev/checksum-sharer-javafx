@@ -125,8 +125,8 @@ public class FileDAO {
         });
     }
 
-    public static void insertFile(KnkFile file) {
-        insertFile(
+    public static int insertFile(KnkFile file) {
+        return insertFile(
                 file.getFileName(),
                 file.getAbsolutePath(),
                 file.lastModified(),
@@ -137,8 +137,8 @@ public class FileDAO {
                 file.getSha3512());
     }
 
-    public static void insertFile(String fileName, String fullPath, Long lastModified, Long fileSize,
-                                  String sha256, String sha512, String sha3384, String sha3512) {
+    public static int insertFile(String fileName, String fullPath, Long lastModified, Long fileSize,
+                                 String sha256, String sha512, String sha3384, String sha3512) {
         //update database
         int id = (int) CRUDHelper.create(
                 TABLE_NAME,
@@ -149,6 +149,7 @@ public class FileDAO {
                         Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR});
 
         updateFilesFromDB();
+        return id;
     }
 
     public static void delete(int id) {
@@ -162,7 +163,7 @@ public class FileDAO {
     }
 
     public static void delete(List<KnkFile> files) {
-        for(KnkFile knkFile : files) {
+        for (KnkFile knkFile : files) {
             CRUDHelper.delete(TABLE_NAME, knkFile.getId());
         }
         updateFilesFromDB();
