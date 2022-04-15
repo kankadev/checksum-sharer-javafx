@@ -1,6 +1,7 @@
 package dev.kanka.checksumsharer;
 
 import dev.kanka.checksumsharer.dao.Database;
+import dev.kanka.checksumsharer.enums.ResourceBundles;
 import dev.kanka.checksumsharer.utils.Alerts;
 import dev.kanka.checksumsharer.utils.FileUtil;
 import javafx.application.Application;
@@ -17,12 +18,14 @@ import org.kordamp.bootstrapfx.BootstrapFX;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 
 public class ChecksumSharerApplication extends Application {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static Stage primaryStage;
+    private final ResourceBundle lBundle = ResourceBundle.getBundle(ResourceBundles.GENERAL.getBundleName());
 
     public static void main(String[] args) {
         launch();
@@ -33,7 +36,7 @@ public class ChecksumSharerApplication extends Application {
         primaryStage = stage;
 
         if (Database.isOK()) {
-            FXMLLoader fxmlLoader = new FXMLLoader(ChecksumSharerApplication.class.getResource("fxml/main_window.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(ChecksumSharerApplication.class.getResource("fxml/main_window.fxml"), lBundle);
             fxmlLoader.setController(MainController.getInstance());
             Scene scene = new Scene(fxmlLoader.load(), 1200, 900);
             scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());

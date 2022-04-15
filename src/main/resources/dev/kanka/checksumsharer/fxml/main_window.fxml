@@ -4,14 +4,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<?import org.kordamp.ikonli.javafx.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" styleClass="main-window">
     <children>
         <TabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                  prefHeight="900.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="50.0"
                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <tabs>
-                <Tab fx:id="homeTab" text="Home">
+                <Tab fx:id="homeTab" text="%tab.home">
                     <graphic>
                         <FontIcon iconColor="white" iconLiteral="fas-home" iconSize="16"/>
                     </graphic>
@@ -19,7 +19,7 @@
                         <fx:include fx:id="homeTabPage" source="tabs/homeTab.fxml"/>
                     </content>
                 </Tab>
-                <Tab fx:id="settingsTab" text="Settings">
+                <Tab fx:id="settingsTab" text="%tab.settings">
                     <graphic>
                         <FontIcon iconColor="white" iconLiteral="fas-cog" iconSize="16"/>
                     </graphic>
@@ -27,7 +27,7 @@
                         <fx:include fx:id="settingsTabPage" source="tabs/settingsTab.fxml"/>
                     </content>
                 </Tab>
-                <Tab fx:id="imprintTab" text="Imprint">
+                <Tab fx:id="imprintTab" text="%tab.imprint">
                     <graphic>
                         <FontIcon iconColor="white" iconLiteral="fas-info-circle" iconSize="16"/>
                     </graphic>
@@ -35,7 +35,7 @@
                         <fx:include fx:id="imprintTabPage" source="tabs/imprintTab.fxml"/>
                     </content>
                 </Tab>
-                <Tab fx:id="donateTab" text="Donate">
+                <Tab fx:id="donateTab" text="%tab.donate">
                     <graphic>
                         <FontIcon iconColor="white" iconLiteral="fas-donate" iconSize="16"/>
                     </graphic>
@@ -52,7 +52,7 @@
             </padding>
             <children>
                 <Text fx:id="progressIndicatorText" strokeType="OUTSIDE" strokeWidth="0.0"
-                      text="Calculating checksums... please wait."/>
+                      text="%calculating_checksums"/>
                 <ProgressIndicator fx:id="progressIndicator" maxHeight="-Infinity" maxWidth="-Infinity"/>
             </children>
         </HBox>

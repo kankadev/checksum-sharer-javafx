@@ -1,4 +1,4 @@
-package dev.kanka.checksumsharer.models;
+package dev.kanka.checksumsharer.settings;
 
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -6,8 +6,8 @@ import javafx.collections.ObservableList;
 
 public class Settings {
 
-    private static final String[] LANGUAGES = {"English", "Deutsch"};
-    private static final String[] DATE_FORMATS = {"yyyy.MM.dd HH:mm:ss", "dd.MM.yyyy HH:mm:ss"};
+    public static final String[] LANGUAGES = {"English", "Deutsch"};
+    public static final String[] DATE_FORMATS = {"yyyy.MM.dd HH:mm:ss", "dd.MM.yyyy HH:mm:ss"};
 
     private ObjectProperty<String> language = new SimpleObjectProperty<>(LANGUAGES[0]);
     private ObjectProperty<String> dateFormat = new SimpleObjectProperty<>(DATE_FORMATS[0]);
