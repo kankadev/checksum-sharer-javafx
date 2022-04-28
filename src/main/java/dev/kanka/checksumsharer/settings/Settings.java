@@ -3,24 +3,31 @@ package dev.kanka.checksumsharer.settings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 public class Settings {
+
+    private static Settings instance = null;
 
     public static final String[] LANGUAGES = {"English", "Deutsch"};
     public static final String[] DATE_FORMATS = {"yyyy.MM.dd HH:mm:ss", "dd.MM.yyyy HH:mm:ss"};
 
     private ObjectProperty<String> language = new SimpleObjectProperty<>(LANGUAGES[0]);
     private ObjectProperty<String> dateFormat = new SimpleObjectProperty<>(DATE_FORMATS[0]);
-    private ObjectProperty<String> localStorageExportPath = new SimpleObjectProperty<>();
-
     private ListProperty<String> allLanguages = new SimpleListProperty<>(FXCollections.observableArrayList(LANGUAGES));
-
     private ListProperty<String> allDateFormats = new SimpleListProperty<>(FXCollections.observableArrayList(DATE_FORMATS));
+    private SimpleMapProperty<String, String> localStoragePaths = new SimpleMapProperty<>(FXCollections.observableHashMap());
 
-    // TODO
-    private SimpleListProperty<String> exportLocations = new SimpleListProperty<>();
+    private Settings() {
+        // Singleton
+    }
 
-    private SimpleStringProperty exportLocation = new SimpleStringProperty("");
+    public static Settings getInstance() {
+        if (instance == null) {
+            instance = new Settings();
+        }
+        return instance;
+    }
 
     public String getLanguage() {
         return language.get();
@@ -44,18 +51,6 @@ public class Settings {
 
     public void setDateFormat(String dateFormat) {
         this.dateFormat.set(dateFormat);
-    }
-
-    public String getLocalStorageExportPath() {
-        return localStorageExportPath.get();
-    }
-
-    public ObjectProperty<String> localStorageExportPathProperty() {
-        return localStorageExportPath;
-    }
-
-    public void setLocalStorageExportPath(String exportPath) {
-        this.localStorageExportPath.set(exportPath);
     }
 
     public ObservableList<String> getAllLanguages() {
@@ -82,15 +77,16 @@ public class Settings {
         this.allDateFormats.set(allDateFormats);
     }
 
-    public String getExportLocation() {
-        return exportLocation.get();
+    public ObservableMap<String, String> getLocalStoragePaths() {
+        return localStoragePaths.get();
     }
 
-    public SimpleStringProperty exportLocationProperty() {
-        return exportLocation;
+    public SimpleMapProperty<String, String> localStoragePathsProperty() {
+        return localStoragePaths;
     }
 
-    public void setExportLocation(String exportLocation) {
-        this.exportLocation.set(exportLocation);
+    public void setLocalStoragePaths(ObservableMap<String, String> localStoragePaths) {
+        this.localStoragePaths.set(localStoragePaths);
     }
+
 }
