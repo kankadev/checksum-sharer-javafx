@@ -1,18 +1,18 @@
 package dev.kanka.checksumsharer.tabs;
 
-import dev.kanka.checksumsharer.ChecksumSharerApplication;
 import dev.kanka.checksumsharer.enums.ResourceBundles;
+import dev.kanka.checksumsharer.gui.LocalStorageExportPathGridPane;
 import dev.kanka.checksumsharer.settings.PreferenceKeys;
 import dev.kanka.checksumsharer.settings.Settings;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -20,10 +20,10 @@ import java.util.prefs.Preferences;
 public class SettingsTabController implements Initializable {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final int SPACING = 20;
 
     private final Preferences preferences = Preferences.userRoot().node(Settings.class.getName());
-    private final Settings settings = new Settings();
+    private final Settings settings = Settings.getInstance();
+    LocalStorageExportPathGridPane localStorageExportPathGridPane = new LocalStorageExportPathGridPane();
 
     // Languages
     private final ResourceBundle lBundle = ResourceBundle.getBundle(ResourceBundles.GENERAL.getBundleName());
@@ -43,18 +43,15 @@ public class SettingsTabController implements Initializable {
     @FXML
     TitledPane localStoragePane;
     @FXML
-    TextField localStorageExportPath;
-    @FXML
-    Button localStorageDirectoryChooserButton;
+    AnchorPane localStorageSettingsRootPane;
     @FXML
     Button saveButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         layout();
-        loadPreference();
+        loadPreferences();
         registerListeners();
-        LOGGER.debug(preferences);
     }
 
     public void layout() {
@@ -64,48 +61,51 @@ public class SettingsTabController implements Initializable {
         dateFormatComboBox.getSelectionModel().select(0);
         dateFormatComboBox.setTooltip(dateFormatTooltip);
 
-        // Action Buttons
+        // Local Storage GridPane
+        AnchorPane.setBottomAnchor(localStorageExportPathGridPane, 0.0);
+        AnchorPane.setTopAnchor(localStorageExportPathGridPane, 0.0);
+        AnchorPane.setLeftAnchor(localStorageExportPathGridPane, 0.0);
+        AnchorPane.setRightAnchor(localStorageExportPathGridPane, 0.0);
+        localStorageSettingsRootPane.getChildren().add(localStorageExportPathGridPane);
 
+        // Action Buttons
         saveButton.getStyleClass().addAll("btn", "btn-primary");
     }
 
 
-    private void loadPreference() {
+    private void loadPreferences() {
         settings.languageProperty().set(preferences.get(PreferenceKeys.LANGUAGE, Settings.LANGUAGES[0]));
         settings.dateFormatProperty().set(preferences.get(PreferenceKeys.DATE_FORMAT, Settings.DATE_FORMATS[0]));
-        settings.localStorageExportPathProperty().set(preferences.get(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH, null));
-        localStorageExportPath.setText(settings.getLocalStorageExportPath()); // TODO: use Bindings
-
         dateFormatComboBox.valueProperty().bindBidirectional(settings.dateFormatProperty());
+
+        // Local Storage
+        for (int i = 1; i <= 5; i++) {
+            String path = preferences.get(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH + i, null);
+            localStorageExportPathGridPane.createRow(path, i);
+            settings.getLocalStoragePaths().put(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH + i, path);
+        }
     }
 
-    public void savePreference() {
+    public void savePreferences() {
         LOGGER.debug("save preferences");
 
         preferences.put(PreferenceKeys.LANGUAGE, settings.getLanguage());
         preferences.put(PreferenceKeys.DATE_FORMAT, settings.getDateFormat());
-        preferences.put(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH, settings.getLocalStorageExportPath());
 
-        handleSettings();
-    }
-
-    private void registerListeners() {
-        saveButton.setOnAction(event -> {
-            savePreference();
-        });
-        localStorageDirectoryChooserButton.setOnAction(actionEvent -> {
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            File selectedDirectory = directoryChooser.showDialog(ChecksumSharerApplication.getPrimaryStage());
-
-            if (selectedDirectory.isDirectory()) {
-                LOGGER.debug("Selected export directory: " + selectedDirectory.getAbsolutePath());
-                settings.setLocalStorageExportPath(selectedDirectory.getAbsolutePath());
-                localStorageExportPath.setText(selectedDirectory.getAbsolutePath());
+        ObservableMap<String, String> localStoragePathsMap = settings.localStoragePathsProperty().get();
+        localStoragePathsMap.forEach((s, s2) -> {
+            LOGGER.debug("s: " + s);
+            LOGGER.debug("s2: " + s2);
+            if (s != null && s2 != null) {
+                preferences.put(s, s2);
             }
         });
     }
 
-    private void handleSettings() {
+    private void registerListeners() {
+        saveButton.setOnAction(event -> {
+            savePreferences();
+        });
     }
 
 }
