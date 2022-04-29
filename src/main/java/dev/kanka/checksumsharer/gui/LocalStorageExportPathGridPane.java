@@ -1,6 +1,7 @@
 package dev.kanka.checksumsharer.gui;
 
 import dev.kanka.checksumsharer.ChecksumSharerApplication;
+import dev.kanka.checksumsharer.Constants;
 import dev.kanka.checksumsharer.settings.PreferenceKeys;
 import dev.kanka.checksumsharer.settings.Settings;
 import javafx.scene.control.Button;
@@ -22,8 +23,8 @@ public class LocalStorageExportPathGridPane extends GridPane {
 
     public LocalStorageExportPathGridPane() {
         super();
-        this.setVgap(20.0);
-        this.setHgap(20.0);
+        this.setVgap(Constants.GAP);
+        this.setHgap(Constants.GAP);
     }
 
     public void createRow(String path, int row) {

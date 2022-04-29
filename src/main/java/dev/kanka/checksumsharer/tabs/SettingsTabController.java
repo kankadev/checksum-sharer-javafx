@@ -1,5 +1,6 @@
 package dev.kanka.checksumsharer.tabs;
 
+import dev.kanka.checksumsharer.Constants;
 import dev.kanka.checksumsharer.enums.ResourceBundles;
 import dev.kanka.checksumsharer.gui.LocalStorageExportPathGridPane;
 import dev.kanka.checksumsharer.settings.PreferenceKeys;
@@ -79,7 +80,7 @@ public class SettingsTabController implements Initializable {
         dateFormatComboBox.valueProperty().bindBidirectional(settings.dateFormatProperty());
 
         // Local Storage
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= Constants.NUMBER_LOCAL_STORAGE_PATHS; i++) {
             String path = preferences.get(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH + i, null);
             localStorageExportPathGridPane.createRow(path, i);
             settings.getLocalStoragePaths().put(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH + i, path);
@@ -94,8 +95,6 @@ public class SettingsTabController implements Initializable {
 
         ObservableMap<String, String> localStoragePathsMap = settings.localStoragePathsProperty().get();
         localStoragePathsMap.forEach((s, s2) -> {
-            LOGGER.debug("s: " + s);
-            LOGGER.debug("s2: " + s2);
             if (s != null && s2 != null) {
                 preferences.put(s, s2);
             }

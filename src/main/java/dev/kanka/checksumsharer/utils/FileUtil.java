@@ -1,5 +1,6 @@
 package dev.kanka.checksumsharer.utils;
 
+import dev.kanka.checksumsharer.Constants;
 import dev.kanka.checksumsharer.MainController;
 import dev.kanka.checksumsharer.dao.FileDAO;
 import dev.kanka.checksumsharer.hash.Algorithm;
@@ -139,11 +140,24 @@ public class FileUtil {
      * @param knkFile
      */
     public static void exportChecksumFilesToLocalFileSystem(KnkFile knkFile) {
-        String localStoragePath = preferences.get(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH, null);
+        for (int i = 1; i <= Constants.NUMBER_LOCAL_STORAGE_PATHS; i++) {
+            String localStoragePath = preferences.get(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH + i, null);
 
-        if (localStoragePath != null && !localStoragePath.isEmpty()) {
-            File file = new File(localStoragePath + File.separator + knkFile.getId() + " - " + knkFile.getName() + ".txt");
-            saveTextToFile(knkFile.formatForTextFile(), file);
+            if (localStoragePath != null && !localStoragePath.isEmpty()) {
+                File path = new File(localStoragePath);
+
+                if (!path.exists() || !path.isDirectory()) {
+                    Alerts.error("Error", "Local storage path not exists.", "The local storage directory doesn't exists: " + localStoragePath).show();
+                    continue;
+                }
+
+                File file = new File(localStoragePath + File.separator + knkFile.getId() + " - " + knkFile.getName() + ".txt");
+                saveTextToFile(knkFile.formatForTextFile(), file);
+
+                if (!file.exists()) {
+                    Alerts.error("Error", "Couldn't create file.", "This file couldn't be created: " + file.getAbsolutePath()).show();
+                }
+            }
         }
     }
 }
