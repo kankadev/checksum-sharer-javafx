@@ -3,8 +3,10 @@ package dev.kanka.checksumsharer.tabs;
 import dev.kanka.checksumsharer.Constants;
 import dev.kanka.checksumsharer.enums.ResourceBundles;
 import dev.kanka.checksumsharer.gui.LocalStorageExportPathGridPane;
+import dev.kanka.checksumsharer.gui.WatchDirSettingsGridPane;
 import dev.kanka.checksumsharer.settings.PreferenceKeys;
 import dev.kanka.checksumsharer.settings.Settings;
+import dev.kanka.checksumsharer.watchdir.WatchDirService;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,7 +16,9 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -25,6 +29,7 @@ public class SettingsTabController implements Initializable {
     private final Preferences preferences = Preferences.userRoot().node(Settings.class.getName());
     private final Settings settings = Settings.getInstance();
     LocalStorageExportPathGridPane localStorageExportPathGridPane = new LocalStorageExportPathGridPane();
+    WatchDirSettingsGridPane watchDirSettingsGridPane = new WatchDirSettingsGridPane();
 
     // Languages
     private final ResourceBundle lBundle = ResourceBundle.getBundle(ResourceBundles.GENERAL.getBundleName());
@@ -45,6 +50,10 @@ public class SettingsTabController implements Initializable {
     TitledPane localStoragePane;
     @FXML
     AnchorPane localStorageSettingsRootPane;
+    @FXML
+    TitledPane watchDirPane;
+    @FXML
+    AnchorPane watchDirSettingsRootPane;
     @FXML
     Button saveButton;
 
@@ -69,6 +78,13 @@ public class SettingsTabController implements Initializable {
         AnchorPane.setRightAnchor(localStorageExportPathGridPane, 0.0);
         localStorageSettingsRootPane.getChildren().add(localStorageExportPathGridPane);
 
+        // Watch Dir GridPane
+        AnchorPane.setBottomAnchor(watchDirSettingsGridPane, 0.0);
+        AnchorPane.setTopAnchor(watchDirSettingsGridPane, 0.0);
+        AnchorPane.setLeftAnchor(watchDirSettingsGridPane, 0.0);
+        AnchorPane.setRightAnchor(watchDirSettingsGridPane, 0.0);
+        watchDirSettingsRootPane.getChildren().add(watchDirSettingsGridPane);
+
         // Action Buttons
         saveButton.getStyleClass().addAll("btn", "btn-primary");
     }
@@ -85,6 +101,23 @@ public class SettingsTabController implements Initializable {
             localStorageExportPathGridPane.createRow(path, i);
             settings.getLocalStoragePaths().put(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH + i, path);
         }
+
+        // Watch Dir
+        for (int i = 1; i <= Constants.NUMBER_WATCH_DIR_PATHS; i++) {
+            String path = preferences.get(PreferenceKeys.WATCH_DIR_PATH + i, null);
+            watchDirSettingsGridPane.createRow(path, i);
+            settings.getWatchDirPaths().put(PreferenceKeys.WATCH_DIR_PATH + i, path);
+            try {
+                if (path != null) {
+                    WatchDirService.getInstance().register(Paths.get(path));
+                }
+            } catch (IOException e) {
+                LOGGER.error(e);
+                // TODO
+            }
+        }
+
+        WatchDirService.getInstance().processEvents();
     }
 
     public void savePreferences() {
@@ -99,6 +132,13 @@ public class SettingsTabController implements Initializable {
                 preferences.put(s, s2);
             }
         });
+
+        ObservableMap<String, String> watchDirPathsMap = settings.watchDirPathsProperty().get();
+        watchDirPathsMap.forEach((s, s2) -> {
+            if (s != null && s2 != null) {
+                preferences.put(s, s2);
+            }
+        });
     }
 
     private void registerListeners() {
@@ -106,5 +146,4 @@ public class SettingsTabController implements Initializable {
             savePreferences();
         });
     }
-
 }

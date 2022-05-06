@@ -17,7 +17,8 @@ public class Settings {
     private ListProperty<String> allLanguages = new SimpleListProperty<>(FXCollections.observableArrayList(LANGUAGES));
     private ListProperty<String> allDateFormats = new SimpleListProperty<>(FXCollections.observableArrayList(DATE_FORMATS));
     private SimpleMapProperty<String, String> localStoragePaths = new SimpleMapProperty<>(FXCollections.observableHashMap());
-
+    private SimpleMapProperty<String, String> watchDirPaths = new SimpleMapProperty<>(FXCollections.observableHashMap());
+    
     private Settings() {
         // Singleton
     }
@@ -88,5 +89,18 @@ public class Settings {
     public void setLocalStoragePaths(ObservableMap<String, String> localStoragePaths) {
         this.localStoragePaths.set(localStoragePaths);
     }
+
+    public ObservableMap<String, String> getWatchDirPaths() {
+        return watchDirPaths.get();
+    }
+
+    public SimpleMapProperty<String, String> watchDirPathsProperty() {
+        return watchDirPaths;
+    }
+
+    public void setWatchDirPaths(ObservableMap<String, String> watchDirPaths) {
+        this.watchDirPaths.set(watchDirPaths);
+    }
+
 
 }

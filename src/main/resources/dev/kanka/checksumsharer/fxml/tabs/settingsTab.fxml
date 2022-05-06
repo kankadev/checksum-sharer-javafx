@@ -70,6 +70,11 @@
                         <AnchorPane fx:id="localStorageSettingsRootPane" prefHeight="200.0" prefWidth="200.0"/>
                     </content>
                 </TitledPane>
+                <TitledPane fx:id="watchDirPane" animated="false" text="%watchdir.title">
+                    <content>
+                        <AnchorPane fx:id="watchDirSettingsRootPane" prefHeight="200.0" prefWidth="200.0"/>
+                    </content>
+                </TitledPane>
             </panes>
             <VBox.margin>
                 <Insets bottom="20.0"/>
