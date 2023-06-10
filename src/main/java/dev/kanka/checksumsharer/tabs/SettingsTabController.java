@@ -2,8 +2,8 @@ package dev.kanka.checksumsharer.tabs;
 
 import dev.kanka.checksumsharer.Constants;
 import dev.kanka.checksumsharer.enums.ResourceBundles;
-import dev.kanka.checksumsharer.gui.LocalStorageExportPathGridPane;
-import dev.kanka.checksumsharer.gui.WatchDirSettingsGridPane;
+import dev.kanka.checksumsharer.gui.LocalStorageExportPathSettingsGridPane;
+import dev.kanka.checksumsharer.gui.WatchDirSettingsSettingsGridPane;
 import dev.kanka.checksumsharer.settings.PreferenceKeys;
 import dev.kanka.checksumsharer.settings.Settings;
 import dev.kanka.checksumsharer.watchdir.WatchDirService;
@@ -28,8 +28,8 @@ public class SettingsTabController implements Initializable {
 
     private final Preferences preferences = Preferences.userRoot().node(Settings.class.getName());
     private final Settings settings = Settings.getInstance();
-    LocalStorageExportPathGridPane localStorageExportPathGridPane = new LocalStorageExportPathGridPane();
-    WatchDirSettingsGridPane watchDirSettingsGridPane = new WatchDirSettingsGridPane();
+    LocalStorageExportPathSettingsGridPane localStorageExportPathGridPane = new LocalStorageExportPathSettingsGridPane();
+    WatchDirSettingsSettingsGridPane watchDirSettingsGridPane = new WatchDirSettingsSettingsGridPane();
 
     // Languages
     private final ResourceBundle lBundle = ResourceBundle.getBundle(ResourceBundles.GENERAL.getBundleName());
@@ -98,17 +98,19 @@ public class SettingsTabController implements Initializable {
         // Local Storage
         for (int i = 1; i <= Constants.NUMBER_LOCAL_STORAGE_PATHS; i++) {
             String path = preferences.get(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH + i, null);
-            localStorageExportPathGridPane.createRow(path, i);
+            localStorageExportPathGridPane.createRow(path, i, false);
             settings.getLocalStoragePaths().put(PreferenceKeys.LOCAL_STORAGE_EXPORT_PATH + i, path);
         }
 
         // Watch Dir
         for (int i = 1; i <= Constants.NUMBER_WATCH_DIR_PATHS; i++) {
             String path = preferences.get(PreferenceKeys.WATCH_DIR_PATH + i, null);
-            watchDirSettingsGridPane.createRow(path, i);
+            Boolean recursive = preferences.getBoolean(PreferenceKeys.WATCH_DIR_RECURSIVE + i, false);
+
+            watchDirSettingsGridPane.createRow(path, i, recursive);
             settings.getWatchDirPaths().put(PreferenceKeys.WATCH_DIR_PATH + i, path);
             try {
-                if (path != null) {
+                if (path != null && !path.isEmpty()) {
                     WatchDirService.getInstance().register(Paths.get(path));
                 }
             } catch (IOException e) {
@@ -137,6 +139,13 @@ public class SettingsTabController implements Initializable {
         watchDirPathsMap.forEach((s, s2) -> {
             if (s != null && s2 != null) {
                 preferences.put(s, s2);
+            }
+        });
+
+        ObservableMap<String, Boolean> watchDirPathsRecursiveMap = settings.watchDirPathsRecursiveProperty().get();
+        watchDirPathsRecursiveMap.forEach((s, s2) -> {
+            if (s != null && s2 != null) {
+                preferences.putBoolean(s, s2);
             }
         });
     }

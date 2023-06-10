@@ -20,8 +20,7 @@ public class WatchDirService {
     private static WatchService watcher;
     private final Map<WatchKey, Path> keys = new HashMap<>();
     private final boolean recursive = false; // TODO: read this from Preferences?
-    private boolean trace = false; // TODO: read this from Preferences?
-
+    private boolean trace = false;
     private static final Logger LOGGER = LogManager.getLogger();
 
     static <T> WatchEvent<T> cast(WatchEvent<?> event) {
