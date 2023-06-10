@@ -18,7 +18,8 @@ public class Settings {
     private ListProperty<String> allDateFormats = new SimpleListProperty<>(FXCollections.observableArrayList(DATE_FORMATS));
     private SimpleMapProperty<String, String> localStoragePaths = new SimpleMapProperty<>(FXCollections.observableHashMap());
     private SimpleMapProperty<String, String> watchDirPaths = new SimpleMapProperty<>(FXCollections.observableHashMap());
-    
+    private SimpleMapProperty<String, Boolean> watchDirPathsRecursive = new SimpleMapProperty<>(FXCollections.observableHashMap());
+
     private Settings() {
         // Singleton
     }
@@ -103,4 +104,15 @@ public class Settings {
     }
 
 
+    public ObservableMap<String, Boolean> getWatchDirPathsRecursive() {
+        return watchDirPathsRecursive.get();
+    }
+
+    public SimpleMapProperty<String, Boolean> watchDirPathsRecursiveProperty() {
+        return watchDirPathsRecursive;
+    }
+
+    public void setWatchDirPathsRecursive(ObservableMap<String, Boolean> watchDirPathsRecursive) {
+        this.watchDirPathsRecursive.set(watchDirPathsRecursive);
+    }
 }
